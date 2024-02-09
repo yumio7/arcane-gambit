@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class Hand : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    List<Card> cards;
+    int handLimit;
+
+    public Hand ()
     {
-        
+        cards = new List<Card> ();
+        handLimit = 0;
     }
 
-    // Update is called once per frame
-    void Update()
+    public Hand (List<Card> cards, int handLimit)
     {
-        
+        this.cards = cards;
+        this.handLimit = handLimit;
     }
 }

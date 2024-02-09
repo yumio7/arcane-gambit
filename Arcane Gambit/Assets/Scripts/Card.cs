@@ -2,17 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Card : MonoBehaviour
+public struct Card
 {
-    // Start is called before the first frame update
-    void Start()
+    SuitType suit;
+    int rank; //1 - 13 is ace to king
+    string name;
+
+    public Card(SuitType suit, int rank, string name = "")
     {
-        
+        this.suit = suit;
+        this.rank = rank;
+        this.name = name;
+        if (this.name == "")
+        {
+            this.name = FormattedName();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public string FormattedName()
     {
-        
+        return $"{CardGame.RankToString(rank)} of {suit}s";
+    }
+
+    public void Print()
+    {
+        Debug.Log(FormattedName());
     }
 }
