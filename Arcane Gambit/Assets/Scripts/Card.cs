@@ -4,24 +4,25 @@ using UnityEngine;
 
 public struct Card
 {
-    SuitType suit;
-    int rank; //1 - 13 is ace to king
-    string name;
+
+    public SuitType Suit { get; private set; }
+    public int Rank { get; private set; }
+    public string Name { get; private set; }
 
     public Card(SuitType suit, int rank, string name = "")
     {
-        this.suit = suit;
-        this.rank = rank;
-        this.name = name;
-        if (this.name == "")
+        Suit = suit;
+        Rank = rank;
+        Name = name;
+        if (Name == "")
         {
-            this.name = FormattedName();
+            Name = FormattedName();
         }
     }
 
     public string FormattedName()
     {
-        return $"{CardGame.RankToString(rank)} of {suit}s";
+        return $"{CardGame.RankToString(Rank)} of {Suit}s";
     }
 
     public void Print()

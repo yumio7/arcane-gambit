@@ -2,17 +2,62 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player
 {
-    // Start is called before the first frame update
-    void Start()
+    public delegate void PlayerResponseAction(Player player, PlayerRequestType requestType, int value); // delegate definition
+    public event PlayerResponseAction OnPlayerResponse;  // Event declaration
+    
+    public string Name { get; private set; }
+    public Hand Hand { get; private set; }
+    public bool Alive { get; private set; } = true;
+
+    public bool OutOfBetting { get; private set; } = false;
+    //represents this player's spot in the poker manager, this is here for convenience
+    public int IndexInManager { get; }
+
+    public int CurrentBetAmount { get; private set; }
+    public int TotalChips { get; private set; }
+    public List<Card> DiscardedCards { get; private set; } = new List<Card>();
+
+    public Player(int handSize, int startingChipAmount, int index, string name = "")
+    {
+        Hand = new Hand(handSize);
+        TotalChips = startingChipAmount;
+        IndexInManager = index;
+        Name = name;
+    }
+
+    public void NewRound()
+    {
+        Hand.Reset();
+        OutOfBetting = false;
+    }
+
+    public void BidRequest()
+    {
+        
+    }
+    
+    public void MulliganRequest()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// Invokes the OnPlayerResponse event with the PlayerRequestType.Bid and the specified bidValue.
+    /// </summary>
+    /// <param name="bidValue">The value indicating the amount to bid.</param>
+    public void RespondToBid(int bidValue)
     {
-        
+        OnPlayerResponse?.Invoke(this, PlayerRequestType.Bid, bidValue);  //Invoke the event
+    }
+
+    /// <summary>
+    /// Responds to a mulligan request from the game manager by invoking the OnPlayerResponse event with the PlayerRequestType.Mulligan and the specified mulliganValue.
+    /// </summary>
+    /// <param name="mulliganValue">The value indicating the amount of cards the player needs to replace discarded cards.</param>
+    public void RespondToMulligan(int mulliganValue)
+    {
+        OnPlayerResponse?.Invoke(this, PlayerRequestType.Mulligan, mulliganValue);  //Invoke the event
     }
 }

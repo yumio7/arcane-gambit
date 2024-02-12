@@ -33,4 +33,20 @@ public static class CardGame
             return string.Empty;
         }
     }
+    
+    public static int StringToRank(string rankString)
+    {
+        foreach (var pair in RankNamePairs)
+        {
+            if (pair.Value == rankString)
+            {
+                return pair.Key;
+            }
+        }
+        Debug.Log(
+            $"Rank string pair for {rankString}, not found. Please visit the CardGame script and add your rank string pair.");
+        return -1;
+    }
+    
+    //public static 
 }

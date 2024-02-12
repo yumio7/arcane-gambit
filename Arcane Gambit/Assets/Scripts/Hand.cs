@@ -1,21 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
-public class Hand : MonoBehaviour
+///<summary>
+/// Represents a player's hand of cards
+///</summary>
+public class Hand : CardCollection
 {
-    List<Card> cards;
-    int handLimit;
+    public int MaximumHandSize { get; private set; }
 
-    public Hand ()
+    public Hand(int maximumHandSize)
     {
-        cards = new List<Card> ();
-        handLimit = 0;
+        MaximumHandSize = maximumHandSize;
     }
 
-    public Hand (List<Card> cards, int handLimit)
+    public void DrawCard(Deck deck)
     {
-        this.cards = cards;
-        this.handLimit = handLimit;
+        if (Cards.Count < MaximumHandSize)
+        {
+            var card = deck.DrawCard();
+            Cards.Add(card);
+        }
+        else
+        {
+            Debug.Log("The hand is full, can't draw more cards");
+        }
+    }
+
+    public void PlayCard(Card card)
+    {
+        if (Cards.Contains(card))
+        {
+            Cards.Remove(card);
+        }
+        else
+        {
+            Debug.Log("This card is not in the hand");
+        }
     }
 }
