@@ -7,7 +7,7 @@ public static class CardGame
 {
     static Dictionary<int, string> RankNamePairs = new Dictionary<int, string>()
     {
-        { 1, "Ace"},
+        { 1, "Null"},
         { 2, "Two"},
         { 3, "Three"},
         { 4, "Four"},
@@ -20,6 +20,7 @@ public static class CardGame
         { 11, "Jack" },
         { 12, "Queen" },
         { 13, "King" },
+        { 14, "Ace" }
     };
 
     public static string RankToString(int rank)

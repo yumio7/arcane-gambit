@@ -19,7 +19,7 @@ public class Deck : CardCollection
     public void AddStandardDeck()
     {
         foreach (var suit in new[] { SuitType.Spade, SuitType.Heart, SuitType.Diamond, SuitType.Club })
-        foreach (var rank in new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 })
+        foreach (var rank in new[] { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 })
             AddCard(new Card(suit, rank));
     }
 

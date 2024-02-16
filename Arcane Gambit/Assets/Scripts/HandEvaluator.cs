@@ -35,7 +35,7 @@ public static class HandEvaluator
     }
 
     // Determines a score for a hand of five cards.
-    public static int EvaluateHandOfFive(List<Card> cards)
+    private static int EvaluateHandOfFive(List<Card> cards)
     {
         // Card rank weights
         int[] card_rank_weight = new int[5]{ 1, 15, 210, 2940, 41160};
@@ -73,11 +73,36 @@ public static class HandEvaluator
             h_class = HandClass.three_of_a_kind;
             score = 3000000;
         }
-        if (card_ranks[card_ranks.Count - 1] - card_ranks[0] == 4) //straight
+        if (card_ranks[card_ranks.Count - 1] - card_ranks[0] == 4) //straight (with high Ace)
         { 
-            // Need to add logic here for an ace being low & high 
             h_class = HandClass.straight;
             score = 4000000;
+        }
+        // Special check for straight with Ace as a low card, making a copy 
+        // of the hand but replacing all aces with a fake card of rank 1.
+        List<Card> handCopy = new List<Card>();
+        List<int> card_ranks_new = new List<int>();
+        foreach (Card c in cards)
+        {
+            if (c.Rank == 14)
+            {
+                handCopy.Add(new Card(c.Suit, 1, "Low Ace"));
+            } else
+            {
+                handCopy.Add(c);
+            }
+        }
+        foreach(Card c in handCopy)
+        {
+            card_ranks_new.Add(c.Rank);
+        }
+        card_ranks_new.Sort();
+        // We perform the same operation
+        if (card_ranks_new[card_ranks_new.Count - 1] - card_ranks_new[0] == 4) //straight (with low Ace)
+        {
+            h_class = HandClass.straight;
+            score = 4000000;
+            card_ranks = card_ranks_new;
         }
         if (IsHistogramFormat(suit_histogram, new List<int>{ 5})) { //flush
             if (h_class == HandClass.straight)
@@ -242,16 +267,18 @@ public static class HandEvaluator
         return score;
     }
 
+    // Determines if two sets of cards are equal.
     private static bool CardSetsAreEqual(List<Card> set1, List<Card> set2)
     {
+        List<Card> set2Copy = new List<Card>(set2);
         foreach(Card c in set1)
         {
-            if(set2.Contains(c))
+            if(set2Copy.Contains(c))
             {
-                set2.Remove(c);
+                set2Copy.Remove(c);
             }
         }
-        return set2.Count == 0;
+        return set2Copy.Count == 0;
     }
 
     // Evaluates and returns a score for a given hand of any size >= 5 cards.
@@ -268,8 +295,6 @@ public static class HandEvaluator
             original.Add(cards[i]);
         }
         max_score = EvaluateHandOfFive(original);
-
-        Debug.Log(max_score);
 
         List<Card> subset = new List<Card>();
         // Until we loop back around, check every possible subset of cards until
