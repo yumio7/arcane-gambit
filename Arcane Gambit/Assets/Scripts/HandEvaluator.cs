@@ -34,6 +34,22 @@ public static class HandEvaluator
         return format.Count == 0;
     }
 
+    // Determines if sequnece of numbers increases by 1 in linear order.
+    // Assumes sequence is sorted from lowest to highest. 
+    private static bool IsSequentialRun(List<int> sequence)
+    {
+        if (sequence.Count < 2)
+        {
+            return true;
+        }
+
+        for(int i = 1; i < sequence.Count; i++)
+        {
+            if(sequence[i] - sequence[i - 1] != 1) { return false; }
+        }
+        return true;
+    }
+
     // Determines a score for a hand of five cards.
     private static int EvaluateHandOfFive(List<Card> cards)
     {
@@ -73,7 +89,7 @@ public static class HandEvaluator
             h_class = HandClass.three_of_a_kind;
             score = 3000000;
         }
-        if (card_ranks[card_ranks.Count - 1] - card_ranks[0] == 4) //straight (with high Ace)
+        if (IsSequentialRun(card_ranks)) //straight (with high Ace)
         { 
             h_class = HandClass.straight;
             score = 4000000;
@@ -98,7 +114,7 @@ public static class HandEvaluator
         }
         card_ranks_new.Sort();
         // We perform the same operation
-        if (card_ranks_new[card_ranks_new.Count - 1] - card_ranks_new[0] == 4) //straight (with low Ace)
+        if (IsSequentialRun(card_ranks_new)) //straight (with low Ace)
         {
             h_class = HandClass.straight;
             score = 4000000;
@@ -267,20 +283,6 @@ public static class HandEvaluator
         return score;
     }
 
-    // Determines if two sets of cards are equal.
-    private static bool CardSetsAreEqual(List<Card> set1, List<Card> set2)
-    {
-        List<Card> set2Copy = new List<Card>(set2);
-        foreach(Card c in set1)
-        {
-            if(set2Copy.Contains(c))
-            {
-                set2Copy.Remove(c);
-            }
-        }
-        return set2Copy.Count == 0;
-    }
-
     // Evaluates and returns a score for a given hand of any size >= 5 cards.
     public static int EvaluateHand(List<Card> cards)
     {
@@ -299,7 +301,7 @@ public static class HandEvaluator
         List<Card> subset = new List<Card>();
         // Until we loop back around, check every possible subset of cards until
         // we find the maximum possible score.
-        while (!CardSetsAreEqual(subset, original))
+        while (start_pointer != 0)
         {
             subset.Clear();
             temp_pointer = start_pointer;
