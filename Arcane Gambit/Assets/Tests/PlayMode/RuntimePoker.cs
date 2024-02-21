@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -5,6 +6,7 @@ using UnityEditor;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Object = UnityEngine.Object;
 
 public class RuntimePoker
 {
@@ -36,7 +38,7 @@ public class RuntimePoker
     }
     // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
     // `yield return null;` to skip a frame.
-    //[UnityTest]
+    [UnityTest]
     public IEnumerator TestPlayerRaise()
     {
         yield return null;
@@ -47,16 +49,16 @@ public class RuntimePoker
         Debug.Log(_poker.CurrentPlayer.Name);
         Debug.Log(_player1.BidToMatch);
         _poker.CurrentPlayer.Raise(1);
-        Assert.That(_poker.BidPot, Is.EqualTo(1));
-        Assert.That(_poker.CurrentPlayer.CurrentBetAmount, Is.EqualTo(1));
-        Assert.That(_poker.CurrentPlayer.TotalChips, Is.EqualTo(99));
+        Assert.That(_poker.BidPot, Is.EqualTo(2));
+        Assert.That(_poker.CurrentPlayer.CurrentBetAmount, Is.EqualTo(2));
+        Assert.That(_poker.CurrentPlayer.TotalChips, Is.EqualTo(98));
         yield return null;
         Debug.Log(_poker.CurrentPlayer.Name);
         Debug.Log(_player2.BidToMatch);
         _poker.CurrentPlayer.Raise(1);
-        Assert.That(_poker.BidPot, Is.EqualTo(3));
-        Assert.That(_poker.CurrentPlayer.CurrentBetAmount, Is.EqualTo(2));
-        Assert.That(_poker.CurrentPlayer.TotalChips, Is.EqualTo(98));
+        Assert.That(_poker.BidPot, Is.EqualTo(5));
+        Assert.That(_poker.CurrentPlayer.CurrentBetAmount, Is.EqualTo(3));
+        Assert.That(_poker.CurrentPlayer.TotalChips, Is.EqualTo(97));
     }
     
     [UnityTest]
@@ -67,20 +69,68 @@ public class RuntimePoker
         {
             yield return null;
         }
+        yield return null;
+        yield return null;
+        Debug.Log(_poker.CurrentMinBid );
         _poker.CurrentPlayer.Fold();
         yield return null;
         Assert.That(_poker.BidPot, Is.EqualTo(0));
         //Assert.Equals()
     }
 
-    /*[UnityTest]
+    [UnityTest]
     public IEnumerator TestProceedBidding()
     {
         yield return null;
-        while (_poker.PokerState.GetType() != typeof(BettingRoundState))
+        while (_poker.PokerState.GetType() != typeof(BlindBettingRoundState))
         {
             yield return null;
         }
+        Debug.Log("min bet" + _poker.CurrentMinBid);
+        Debug.Log(_player1.CurrentBetAmount);
+        yield return null;
+
+        _poker.CurrentPlayer.Match();
+        Debug.Log(_player2.CurrentBetAmount);
+        yield return null;
+
+
+        _poker.CurrentPlayer.Match();
+        Debug.Log(_player3.CurrentBetAmount);
+        yield return null;
+
+
+        yield return null;
+        Assert.That(_poker.PokerState.GetType(), Is.EqualTo(typeof(BlindBettingRoundState)));
+        _poker.CurrentPlayer.Match();
+        Debug.Log(_player4.CurrentBetAmount);
+
+        yield return null;
+        Assert.That(_poker.PokerState.GetType(), Is.EqualTo(typeof(MulliganRoundState)));
+
+    }
+    
+    [Test]
+    public void AreAllPlayersMatchingHighestBetTest()
+    {
+        _poker.SendInputRequest(_player1, PlayerRequestType.Bid);
+        _poker.SendInputRequest(_player2, PlayerRequestType.Bid);
+        _poker.SendInputRequest(_player3, PlayerRequestType.Bid);
+        _poker.SendInputRequest(_player4, PlayerRequestType.Bid);
+
+        _player1.Match();
+        Debug.Log(_player1.CurrentBetAmount);
+        _player2.Match();
+        Debug.Log(_player2.CurrentBetAmount);
+
+        _player3.Match();
+        Debug.Log(_player3.CurrentBetAmount);
+
+        _player4.Match();
+        Debug.Log(_player4.CurrentBetAmount);
+
+        Assert.That(_poker.AreAllPlayersMatchingHighestBet(), Is.EqualTo(true));
+        //_player1.
         
-    }*/
+    }
 }

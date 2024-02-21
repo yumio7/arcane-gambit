@@ -50,7 +50,7 @@ public class BettingRoundState : GameState
 {
     public override void OnEnter(Poker poker)
     {
-        poker.StartBettingSequence(true);
+        poker.StartBettingSequence();
     }
 
     public override void Execute(Poker poker)
@@ -64,7 +64,7 @@ public class BlindBettingRoundState : GameState
 {
     public override void OnEnter(Poker poker)
     {
-        poker.StartBettingSequence();
+        poker.StartBettingSequence(true);
     }
 
     public override void Execute(Poker poker)
@@ -225,7 +225,7 @@ public class Poker : MonoBehaviour
     public Deck Deck { get; private set; } = new Deck();
     public CardCollection DiscardPile { get; private set; } = new CardCollection();
     public int BidPot { get; private set; } = 0;
-    public int CurrentMinBid { get; private set; } = 0;
+    public int CurrentMinBid { get; private set; } = 1;
     public int RoundCount { get; private set; } = 1;
     public bool Busy { get; private set; } = false;
     public IBlindSetting Blind;
@@ -256,6 +256,8 @@ public class Poker : MonoBehaviour
     {
         //TODO: set blind player randomly
         BlindPlayer = Players[0];
+        Debug.Log(BlindPlayer.Name);
+
         Blind = new IncrementalBlind(this);
         SwitchState(_gameLoopDefinition[0]);
     }
@@ -318,6 +320,7 @@ public class Poker : MonoBehaviour
         {
             StopCoroutine(_currentProcess);
         }
+        Debug.Log(forceBlind);
         _currentProcess = StartCoroutine(PlayerBettingSequenceCoroutine(forceBlind));
     }
     
@@ -326,7 +329,7 @@ public class Poker : MonoBehaviour
         PauseProcesses();
         yield return null;
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
-
+Debug.Log(forceBlind);
         if (forceBlind)
         {
             ProcessBlind();
@@ -359,6 +362,7 @@ public class Poker : MonoBehaviour
 
     private void ProcessBlind()
     {
+        Debug.Log(BlindPlayer.Name);
         BlindPlayer.BidRequest(CurrentMinBid);
         BlindPlayer.Match();
     }
@@ -455,10 +459,10 @@ public class Poker : MonoBehaviour
     public bool AreAllPlayersMatchingHighestBet()
     {
         // Determine the highest bet among alive players
-        int highestBet = Players.Where(player => player.Alive && !player.OutOfBetting).Max(player => player.CurrentBetAmount);
+        //int highestBet = Players.Where(player => player.Alive && !player.OutOfBetting).Max(player => player.CurrentBetAmount);
 
         // Check if all alive players' current bet equals to the highest bet
-        return Players.Where(player => player.Alive && !player.OutOfBetting).All(player => player.CurrentBetAmount == highestBet);
+        return Players.Where(player => player.Alive && !player.OutOfBetting).All(player => player.CurrentBetAmount == CurrentMinBid);
     }
     
 }
