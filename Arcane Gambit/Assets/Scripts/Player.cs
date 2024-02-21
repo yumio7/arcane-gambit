@@ -7,19 +7,19 @@ public class Player
     public delegate void PlayerResponseAction(Player player, PlayerRequestType requestType, int value); // delegate definition
     public event PlayerResponseAction OnPlayerResponse;  // Event declaration
     
-    public string Name { get; private set; }
-    public Hand Hand { get; private set; }
-    public bool Alive { get; private set; } = true;
+    public string Name { get; protected set; }
+    public Hand Hand { get; protected set; }
+    public bool Alive { get; protected set; } = true;
 
-    public bool OutOfBetting { get; private set; } = false;
+    public bool OutOfBetting { get; protected set; } = false;
     //represents this player's spot in the poker manager, this is here for convenience
     public int IndexInManager { get; }
 
-    public int CurrentBetAmount { get; private set; }
-    public int TotalChips { get; private set; }
-    public List<Card> DiscardedCards { get; private set; } = new List<Card>();
+    public int CurrentBetAmount { get; protected set; }
+    public int TotalChips { get; protected set; }
+    public List<Card> DiscardedCards { get; protected set; } = new List<Card>();
 
-    public int BidToMatch { get; private set; }= 0;
+    public int BidToMatch { get; protected set; } = 0;
 
     public Player(int handSize, int startingChipAmount, int index, string name = "")
     {
@@ -29,43 +29,44 @@ public class Player
         Name = name;
     }
 
-    public void NewRound()
+    public virtual void NewRound()
     {
         Hand.Reset();
         OutOfBetting = false;
     }
 
-    public void BidRequest(int bidToMatch)
+    public virtual void BidRequest(int bidToMatch)
     {
         BidToMatch = bidToMatch;
     }
-    
-    public void MulliganRequest()
+
+    public virtual void MulliganRequest()
     {
         
     }
 
-    public void Match()
+    public virtual void Match()
     {
         int amount = BidToMatch - CurrentBetAmount;
         TakeChipsForBid(amount);
         RespondToBid(amount);
     }
 
-    public void Raise(int bid)
+    public virtual void Raise(int bid)
     {
+        //TODO : fix amount
         int amount = BidToMatch + bid;
         TakeChipsForBid(amount);
         RespondToBid(amount);
     }
 
-    public void Fold()
+    public virtual void Fold()
     {
         OutOfBetting = true;
         RespondToBid(-1);
     }
 
-    private void TakeChipsForBid(int amount)
+    protected void TakeChipsForBid(int amount)
     {
         TotalChips -= amount;
         CurrentBetAmount += amount;
@@ -75,7 +76,7 @@ public class Player
     /// Invokes the OnPlayerResponse event with the PlayerRequestType.Bid and the specified bidValue.
     /// </summary>
     /// <param name="bidValue">The value indicating the amount to bid.</param>
-    public void RespondToBid(int bidValue)
+    public virtual void RespondToBid(int bidValue)
     {
         OnPlayerResponse?.Invoke(this, PlayerRequestType.Bid, bidValue);  //Invoke the event
     }
@@ -84,7 +85,7 @@ public class Player
     /// Responds to a mulligan request from the game manager by invoking the OnPlayerResponse event with the PlayerRequestType.Mulligan and the specified mulliganValue.
     /// </summary>
     /// <param name="mulliganValue">The value indicating the amount of cards the player needs to replace discarded cards.</param>
-    public void RespondToMulligan(int mulliganValue)
+    public virtual void RespondToMulligan(int mulliganValue)
     {
         OnPlayerResponse?.Invoke(this, PlayerRequestType.Mulligan, mulliganValue);  //Invoke the event
     }

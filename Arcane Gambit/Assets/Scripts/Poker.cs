@@ -252,6 +252,12 @@ public class Poker : MonoBehaviour
         
     }
 
+    //TODO : unsubscribe from player response
+    private void OnDisable()
+    {
+        throw new NotImplementedException();
+    }
+
     private void Start()
     {
         //TODO: set blind player randomly
