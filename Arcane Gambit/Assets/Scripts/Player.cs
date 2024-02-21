@@ -19,6 +19,8 @@ public class Player
     public int TotalChips { get; private set; }
     public List<Card> DiscardedCards { get; private set; } = new List<Card>();
 
+    public int BidToMatch { get; private set; }= 0;
+
     public Player(int handSize, int startingChipAmount, int index, string name = "")
     {
         Hand = new Hand(handSize);
@@ -33,14 +35,40 @@ public class Player
         OutOfBetting = false;
     }
 
-    public void BidRequest()
+    public void BidRequest(int bidToMatch)
     {
-        
+        BidToMatch = bidToMatch;
     }
     
     public void MulliganRequest()
     {
         
+    }
+
+    public void Match()
+    {
+        int amount = BidToMatch - CurrentBetAmount;
+        TakeChipsForBid(amount);
+        RespondToBid(amount);
+    }
+
+    public void Raise(int bid)
+    {
+        int amount = BidToMatch + bid;
+        TakeChipsForBid(amount);
+        RespondToBid(amount);
+    }
+
+    public void Fold()
+    {
+        OutOfBetting = true;
+        RespondToBid(-1);
+    }
+
+    private void TakeChipsForBid(int amount)
+    {
+        TotalChips -= amount;
+        CurrentBetAmount += amount;
     }
 
     /// <summary>
