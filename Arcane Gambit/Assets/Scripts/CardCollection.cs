@@ -28,8 +28,27 @@ public class CardCollection
         Cards.Clear();
     }
 
+    public override string ToString()
+    {
+        string hand = "";
+        foreach (var card in Cards)
+        {
+            hand += card.ToString() + ", ";
+        }
+
+        return hand;
+    }
+
     public void AddCard(Card card)
     {
         Cards.Add(card);
+    }
+
+    public void AddCard(List<Card> cards)
+    {
+        foreach (Card card in cards)
+        {
+            Cards.Add(card);
+        }
     }
 }

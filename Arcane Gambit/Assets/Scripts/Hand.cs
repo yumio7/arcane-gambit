@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,42 @@ public class Hand : CardCollection
         {
             Debug.Log("The hand is full, can't draw more cards");
         }
+    }
+    
+    public Card DiscardCard(int index)
+    {
+        if (index >= 0 && index < Cards.Count)
+        {
+            var card = Cards[index];
+            Cards.RemoveAt(index);
+            return card;
+        }
+        else
+        {
+            throw new IndexOutOfRangeException();
+        }
+    }
+    
+    public List<Card> DiscardCard(List<int> indices)
+    {
+        indices.Sort();
+        indices.Reverse();
+        List<Card> discardedCards = new List<Card>();
+
+        for (int i = 0; i < indices.Count; i++)
+        {
+            int index = indices[i];
+            if (index >= 0 && index < Cards.Count)
+            {
+                discardedCards.Add(DiscardCard(index));
+            }
+            else
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+
+        return discardedCards;
     }
 
     public void PlayCard(Card card)

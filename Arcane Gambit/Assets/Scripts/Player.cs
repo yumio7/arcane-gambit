@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class Player
 
     public int CurrentBetAmount { get; protected set; }
     public int TotalChips { get; protected set; }
-    public List<Card> DiscardedCards { get; protected set; } = new List<Card>();
+    public CardCollection DiscardedCards { get; protected set; } = new CardCollection();
 
     public int BidToMatch { get; protected set; } = 0;
 
@@ -32,7 +33,14 @@ public class Player
     public virtual void NewRound()
     {
         Hand.Reset();
+        
         OutOfBetting = false;
+    }
+
+    public virtual void EndRound()
+    {
+        BidToMatch = 0;
+        CurrentBetAmount = 0;
     }
 
     public virtual void BidRequest(int bidToMatch)
@@ -47,15 +55,17 @@ public class Player
 
     public virtual void Match()
     {
-        int amount = BidToMatch - CurrentBetAmount;
+        int amount = Math.Max(BidToMatch - CurrentBetAmount, 0);
         TakeChipsForBid(amount);
         RespondToBid(amount);
     }
-
-    public virtual void Raise(int bid)
+    public virtual void Raise(int bid = 1)
     {
-        //TODO : fix amount
-        int amount = BidToMatch + bid;
+        if (bid <= 0)
+        {
+            throw new ArgumentException("Bid amount must be greater than zero.");
+        }
+        int amount = Math.Max(BidToMatch - CurrentBetAmount, 0) + bid;
         TakeChipsForBid(amount);
         RespondToBid(amount);
     }
@@ -79,6 +89,20 @@ public class Player
     public virtual void RespondToBid(int bidValue)
     {
         OnPlayerResponse?.Invoke(this, PlayerRequestType.Bid, bidValue);  //Invoke the event
+    }
+
+    public virtual void Mulligan(List<int> cardsToRemove = null)
+    {
+        if (cardsToRemove == null)
+        {
+            RespondToMulligan(0);
+        }
+        else
+        {
+            DiscardedCards.AddCard(Hand.DiscardCard(cardsToRemove));
+            RespondToMulligan(cardsToRemove.Count);
+        }
+        
     }
 
     /// <summary>

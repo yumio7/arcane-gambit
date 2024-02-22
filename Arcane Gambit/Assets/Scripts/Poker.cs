@@ -78,11 +78,12 @@ public class MulliganRoundState : GameState
 {
     public override void OnEnter(Poker poker)
     {
-        //wait for 
+        poker.StartMulliganSequence();
     }
     public override void Execute(Poker poker)
     {
-        Debug.Log("test");
+        if (poker.Busy) { return; }
+        poker.ProceedGameState();
     }
 }
 
@@ -90,15 +91,22 @@ public class CommunityCardState : GameState
 {
     public override void Execute(Poker poker)
     {
-        
+        if (poker.Busy) { return; }
+        poker.ProceedGameState();
     }
 }
 
 public class RoundEndState : GameState
 {
+    public override void OnEnter(Poker poker)
+    {
+        poker.EndRound();
+    }
+
     public override void Execute(Poker poker)
     {
-        
+        if (poker.Busy) { return; }
+        poker.ProceedGameState();
     }
 
     public override void OnExit(Poker poker)
@@ -226,7 +234,7 @@ public class Poker : MonoBehaviour
     public CardCollection DiscardPile { get; private set; } = new CardCollection();
     public int BidPot { get; private set; } = 0;
     public int CurrentMinBid { get; private set; } = 1;
-    public int RoundCount { get; private set; } = 1;
+    public int RoundCount { get; private set; } = 0;
     public bool Busy { get; private set; } = false;
     public IBlindSetting Blind;
 
@@ -252,17 +260,18 @@ public class Poker : MonoBehaviour
         
     }
 
-    //TODO : unsubscribe from player response
     private void OnDisable()
     {
-        throw new NotImplementedException();
+        foreach (Player player in Players)
+        {
+            player.OnPlayerResponse -= HandlePlayerResponse;
+        }
     }
 
     private void Start()
     {
         //TODO: set blind player randomly
         BlindPlayer = Players[0];
-        Debug.Log(BlindPlayer.Name);
 
         Blind = new IncrementalBlind(this);
         SwitchState(_gameLoopDefinition[0]);
@@ -301,8 +310,12 @@ public class Poker : MonoBehaviour
     {
         Deck.Reset();
         DiscardPile.Reset();
-        UpdateBlindStatus();
         RoundCount++;
+    }
+
+    public void EndRound()
+    {
+        UpdateBlindStatus();
     }
     
     private void SwitchState(GameState gameState)
@@ -326,19 +339,18 @@ public class Poker : MonoBehaviour
         {
             StopCoroutine(_currentProcess);
         }
-        Debug.Log(forceBlind);
-        _currentProcess = StartCoroutine(PlayerBettingSequenceCoroutine(forceBlind));
+        _currentProcess = StartCoroutine(BettingSequenceCoroutine(forceBlind));
     }
     
-    public IEnumerator PlayerBettingSequenceCoroutine(bool forceBlind)
+    public IEnumerator BettingSequenceCoroutine(bool forceBlind)
     {
         PauseProcesses();
         yield return null;
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
-Debug.Log(forceBlind);
         if (forceBlind)
         {
             ProcessBlind();
+            Players.Next();
         }
         
         do
@@ -363,12 +375,49 @@ Debug.Log(forceBlind);
         } while (!AreAllPlayersMatchingHighestBet());
         
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
+        Debug.Log("finish");
+        UnpauseProcesses();
+    }
+    
+    public void StartMulliganSequence()
+    {
+        if (_currentProcess != null && Busy)
+        {
+            StopCoroutine(_currentProcess);
+        }
+        _currentProcess = StartCoroutine(MulliganSequenceCoroutine());
+    }
+    
+    public IEnumerator MulliganSequenceCoroutine()
+    {
+        PauseProcesses();
+        yield return null;
+        Players.SetCurrentIndex(BlindPlayer.IndexInManager);
+
+        foreach (Player player in Players)
+        {
+
+            if (!player.Alive || player.OutOfBetting)
+            {
+                continue;
+            }
+            SetCurrentPlayer(player);
+            SendInputRequest(CurrentPlayer, PlayerRequestType.Mulligan);
+            while (_isWaitingForInput)
+            {
+                //Debug.Log("waiting");
+                yield return null;
+            }
+
+        }
+        
+        Players.SetCurrentIndex(BlindPlayer.IndexInManager);
+        Debug.Log("finish");
         UnpauseProcesses();
     }
 
     private void ProcessBlind()
     {
-        Debug.Log(BlindPlayer.Name);
         BlindPlayer.BidRequest(CurrentMinBid);
         BlindPlayer.Match();
     }
@@ -438,7 +487,7 @@ Debug.Log(forceBlind);
     {
         DealCardToPlayer(player, mulliganValue);
         
-        foreach (Card card in player.DiscardedCards)
+        foreach (Card card in player.DiscardedCards.Cards)
         {
             DiscardPile.AddCard(card);
         }
@@ -469,6 +518,27 @@ Debug.Log(forceBlind);
 
         // Check if all alive players' current bet equals to the highest bet
         return Players.Where(player => player.Alive && !player.OutOfBetting).All(player => player.CurrentBetAmount == CurrentMinBid);
+    }
+
+    public Player GetWinningPlayer()
+    {
+        Player highestScoringPlayer = null;
+        int highestScore = 0;
+
+        foreach (Player player in Players)
+        {
+            if (player.Alive && !player.OutOfBetting)
+            {
+                int score = HandEvaluator.EvaluateHand(player.Hand.Cards);
+                if (score > highestScore)
+                {
+                    highestScore = score;
+                    highestScoringPlayer = player;
+                }
+            }
+        }
+
+        return highestScoringPlayer;
     }
     
 }

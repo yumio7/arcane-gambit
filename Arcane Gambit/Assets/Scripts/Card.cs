@@ -25,8 +25,8 @@ public struct Card
         return $"{CardGame.RankToString(Rank)} of {Suit}s";
     }
 
-    public void Print()
+    public override string ToString()
     {
-        Debug.Log(FormattedName());
+        return FormattedName();
     }
 }
