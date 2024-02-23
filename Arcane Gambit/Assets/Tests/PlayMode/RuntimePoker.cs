@@ -24,6 +24,9 @@ public class RuntimePoker
     private Card _card4 = new Card(SuitType.Spade, 5);
     private Card _card5 = new Card(SuitType.Club, 6);
     private List<Card> _testDeck;
+    
+    private Deck deck;
+    private Hand hand1, hand2, hand3, hand4;
 
     [SetUp]
     public void SetUp()
@@ -50,6 +53,49 @@ public class RuntimePoker
         {
             _testPlayer.Hand.AddCard(card);
         }
+        
+        deck = new Deck();
+        
+        hand1 = new Hand(5); //straight flush
+        hand2 = new Hand(5); //flush
+        hand3 = new Hand(5); //two pair
+        hand4 = new Hand(5); //two pair
+
+        hand1.AddCard(new List<Card>()
+        {
+            new Card(SuitType.Club, 3),
+            new Card(SuitType.Club, 4),
+            new Card(SuitType.Club, 5),
+            new Card(SuitType.Club, 6),
+            new Card(SuitType.Club, 7)
+        });
+            
+        hand2.AddCard(new List<Card>()
+        {
+            new Card(SuitType.Club, 2),
+            new Card(SuitType.Club, 4),
+            new Card(SuitType.Club, 5),
+            new Card(SuitType.Club, 9),
+            new Card(SuitType.Club, 7)
+        });
+
+        hand3.AddCard(new List<Card>()
+        {
+            new Card(SuitType.Club, 2),
+            new Card(SuitType.Diamond, 2),
+            new Card(SuitType.Club, 5),
+            new Card(SuitType.Club, 9),
+            new Card(SuitType.Club, 7)
+        });
+            
+        hand4.AddCard(new List<Card>()
+        {
+            new Card(SuitType.Club, 2),
+            new Card(SuitType.Diamond, 2),
+            new Card(SuitType.Club, 5),
+            new Card(SuitType.Club, 10),
+            new Card(SuitType.Club, 7)
+        });
     }
 
     [TearDown]
@@ -265,5 +311,35 @@ public class RuntimePoker
         Debug.Log(_poker.PokerState.GetType());
         Assert.That(_poker.RoundCount, Is.EqualTo(2));
 
+    }
+    
+
+    [UnityTest]
+    public IEnumerator Test_GetWinningPlayerFull()
+    {
+        _poker.Players[0].Hand.AddCard(hand1.Cards);
+        _poker.Players[1].Hand.AddCard(hand2.Cards);
+        _poker.Players[2].Hand.AddCard(hand3.Cards);
+        _poker.Players[3].Hand.AddCard(hand4.Cards);
+        Player winningPlayer = _poker.GetWinningPlayer();
+        Assert.AreEqual(_poker.Players[0], winningPlayer);
+        yield return null;
+    }
+    
+    [UnityTest]
+    public IEnumerator Test_GetWinningPlayerTie()
+    {
+        _poker.Players[0].Hand.AddCard(hand1.Cards);
+        _poker.Players[1].Hand.AddCard(hand2.Cards);
+        _poker.Players[2].Hand.AddCard(hand3.Cards);
+        _poker.Players[3].Hand.AddCard(hand4.Cards);
+        
+        _poker.Players[0].Fold();
+        _poker.Players[1].Fold();
+        
+        Player winningPlayer = _poker.GetWinningPlayer();
+        Debug.Log(winningPlayer.Name);
+        Assert.AreEqual(_poker.Players[3].Name, winningPlayer.Name);
+        yield return null;
     }
 }
