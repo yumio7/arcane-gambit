@@ -47,6 +47,8 @@ public class WorldHandComponent : MonoBehaviour
             GameObject newCardPrefab = Instantiate(card_base_prefab);
             newCardPrefab.transform.position = card_anchor.position;
             newCardPrefab.transform.SetParent(card_anchor);
+            CardVisualizer cardVisualizer = newCardPrefab.GetComponent<CardVisualizer>();
+            cardVisualizer.SetCard(card);
             // Add it to our hand using its card as a key
             WorldHandCardObject card_object = new WorldHandCardObject(card, newCardPrefab, card_anchor.transform.position);
             cards_in_hand.Add(card_object);
@@ -114,5 +116,12 @@ public class WorldHandComponent : MonoBehaviour
     void Update()
     {
         UpdateCardPositions();
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            AddCard(new Card(SuitType.Spade, 5, ""));
+            AddCard(new Card(SuitType.Diamond, 10, ""));
+            AddCard(new Card(SuitType.Heart, 14, ""));
+        }
     }
 }
