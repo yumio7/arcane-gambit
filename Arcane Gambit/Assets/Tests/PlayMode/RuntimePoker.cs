@@ -275,38 +275,22 @@ public class RuntimePoker
 
         Assert.That(_poker.PokerState.GetType(), Is.EqualTo(typeof(MulliganRoundState)));
 
+
+        _poker.ProceedGameState();
+
+        _poker.ProceedGameState();
+        _poker.ProceedGameState();
+
+        _poker.ProceedGameState();
+        _poker.ProceedGameState();
+
+        //_poker.Players[0].Match();
         yield return null;
 
-        _poker.CurrentPlayer.Mulligan();
-        yield return null;
-
-        _poker.CurrentPlayer.Mulligan();
-        yield return null;
-
-        _poker.CurrentPlayer.Mulligan();
-        yield return null;
-
-        _poker.CurrentPlayer.Mulligan();
-        yield return null;
-        
-        _poker.CurrentPlayer.Match();
-        yield return null;
-        _poker.CurrentPlayer.Match();
-        yield return null;
-        _poker.CurrentPlayer.Match();
-        yield return null;
-        _poker.CurrentPlayer.Match();
-        yield return null;
-        _poker.CurrentPlayer.Match();
-        yield return null;
-        _poker.CurrentPlayer.Match();
-        yield return null;
-        _poker.CurrentPlayer.Match();
-        yield return null;
-        _poker.CurrentPlayer.Match();
         yield return null;
         yield return null;
-
+        yield return null;
+    
 
         Debug.Log(_poker.PokerState.GetType());
         Assert.That(_poker.RoundCount, Is.EqualTo(2));
@@ -317,6 +301,10 @@ public class RuntimePoker
     [UnityTest]
     public IEnumerator Test_GetWinningPlayerFull()
     {
+        _poker.Players[0].Hand.Reset();
+        _poker.Players[1].Hand.Reset();
+        _poker.Players[2].Hand.Reset();
+        _poker.Players[3].Hand.Reset();
         _poker.Players[0].Hand.AddCard(hand1.Cards);
         _poker.Players[1].Hand.AddCard(hand2.Cards);
         _poker.Players[2].Hand.AddCard(hand3.Cards);
@@ -329,6 +317,10 @@ public class RuntimePoker
     [UnityTest]
     public IEnumerator Test_GetWinningPlayerTie()
     {
+        _poker.Players[0].Hand.Reset();
+        _poker.Players[1].Hand.Reset();
+        _poker.Players[2].Hand.Reset();
+        _poker.Players[3].Hand.Reset();
         _poker.Players[0].Hand.AddCard(hand1.Cards);
         _poker.Players[1].Hand.AddCard(hand2.Cards);
         _poker.Players[2].Hand.AddCard(hand3.Cards);

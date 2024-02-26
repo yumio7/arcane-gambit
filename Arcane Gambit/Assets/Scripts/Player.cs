@@ -82,6 +82,16 @@ public class Player
         CurrentBetAmount += amount;
     }
 
+    public void GiveChips(int amount)
+    {
+        TotalChips += amount;
+    }
+
+    public void TakeChips(int amount)
+    {
+        TotalChips -= amount;
+    }
+
     /// <summary>
     /// Invokes the OnPlayerResponse event with the PlayerRequestType.Bid and the specified bidValue.
     /// </summary>

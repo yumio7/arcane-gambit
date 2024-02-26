@@ -117,11 +117,11 @@ public class WorldHandComponent : MonoBehaviour
     {
         UpdateCardPositions();
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        /*if(Input.GetKeyDown(KeyCode.Space))
         {
             AddCard(new Card(SuitType.Spade, 5, ""));
             AddCard(new Card(SuitType.Diamond, 10, ""));
             AddCard(new Card(SuitType.Heart, 14, ""));
-        }
+        }*/
     }
 }

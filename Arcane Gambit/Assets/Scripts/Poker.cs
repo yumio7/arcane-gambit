@@ -232,7 +232,8 @@ public class Poker : MonoBehaviour
     public Player BlindPlayer { get; private set; }
     public Deck Deck { get; private set; } = new Deck();
     public CardCollection DiscardPile { get; private set; } = new CardCollection();
-    public int BidPot { get; private set; } = 0;
+    public Card CommunityCard { get; private set; }
+    public int BidPot { get; private set; } = 0; 
     public int CurrentMinBid { get; private set; } = 1;
     public int RoundCount { get; private set; } = 0;
     public bool Busy { get; private set; } = false;
@@ -250,6 +251,12 @@ public class Poker : MonoBehaviour
         new BettingRoundState(),
         new RoundEndState()
     };
+
+    #region TEMPORARY
+
+    [SerializeField] private WorldHandComponent _worldHandComponent;
+
+    #endregion
 
     private void OnEnable()
     {
@@ -279,10 +286,40 @@ public class Poker : MonoBehaviour
 
     void Update()
     {
-        /*if (Input.GetButtonDown(KeyCode.Space.ToString()))
+        #region TEMPORARY_INPUT
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            CurrentPlayer.Raise(1);
-        }*/
+            CurrentPlayer.Match();
+        }
+
+        else if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            CurrentPlayer.Mulligan(new List<int>() {0});
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            CurrentPlayer.Mulligan(new List<int>() {1});
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            CurrentPlayer.Mulligan(new List<int>() {2});
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            CurrentPlayer.Mulligan(new List<int>() {3});
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            CurrentPlayer.Mulligan(new List<int>() {4});
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            CurrentPlayer.Mulligan();
+        }
+
+        #endregion
+        
         PokerState.Execute(this);
         
     }
@@ -315,6 +352,12 @@ public class Poker : MonoBehaviour
 
     public void EndRound()
     {
+        Player winningPlayer = GetWinningPlayer();
+        if (winningPlayer != null)
+        {
+            winningPlayer.GiveChips(BidPot);
+            BidPot = 0;
+        }
         UpdateBlindStatus();
     }
     
@@ -345,8 +388,11 @@ public class Poker : MonoBehaviour
     public IEnumerator BettingSequenceCoroutine(bool forceBlind)
     {
         PauseProcesses();
+
+        bool hasCompletedFullLoop = false;
         yield return null;
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
+        Debug.Log("blind: " + BlindPlayer.Name);
         if (forceBlind)
         {
             ProcessBlind();
@@ -355,8 +401,10 @@ public class Poker : MonoBehaviour
         
         do
         {
+            
             //Debug.Log("betting");
             Player player = Players.Current;
+            Debug.Log(player.Name);
             //skip player if they are dead or out of this betting round
             if (!player.Alive || player.OutOfBetting)
             {
@@ -365,14 +413,19 @@ public class Poker : MonoBehaviour
             }
             SetCurrentPlayer(player);
             SendInputRequest(CurrentPlayer, PlayerRequestType.Bid);
+            //Debug.Log("waiting for " + );
             while (_isWaitingForInput)
             {
-                //Debug.Log("waiting");
+
                 yield return null;
             }
 
             Players.Next();
-        } while (!AreAllPlayersMatchingHighestBet());
+            if (Players.Current == BlindPlayer)
+            {
+                hasCompletedFullLoop = true;
+            }
+        } while (!AreAllPlayersMatchingHighestBet() || !hasCompletedFullLoop);
         
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
         Debug.Log("finish");
@@ -402,6 +455,18 @@ public class Poker : MonoBehaviour
                 continue;
             }
             SetCurrentPlayer(player);
+
+            #region TEMPORARY_HAND_DISPLAY
+
+            _worldHandComponent?.ClearHand();
+            foreach (Card card in CurrentPlayer.Hand.Cards)
+            {
+                _worldHandComponent?.AddCard(card);
+            }
+
+            #endregion
+            
+            
             SendInputRequest(CurrentPlayer, PlayerRequestType.Mulligan);
             while (_isWaitingForInput)
             {
