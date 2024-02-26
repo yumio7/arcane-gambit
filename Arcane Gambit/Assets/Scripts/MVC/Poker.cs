@@ -89,6 +89,11 @@ public class MulliganRoundState : GameState
 
 public class CommunityCardState : GameState
 {
+    public override void OnEnter(Poker poker)
+    {
+        poker.UpdateCommunityCard();
+    }
+
     public override void Execute(Poker poker)
     {
         if (poker.Busy) { return; }
@@ -352,6 +357,11 @@ public class Poker : MonoBehaviour
 
     public void EndRound()
     {
+        if (_gameLoopDefinition.OfType<CommunityCardState>().Any())
+        {
+            
+        }
+        
         Player winningPlayer = GetWinningPlayer();
         if (winningPlayer != null)
         {
@@ -594,7 +604,13 @@ public class Poker : MonoBehaviour
         {
             if (player.Alive && !player.OutOfBetting)
             {
+                if (_gameLoopDefinition.OfType<CommunityCardState>().Any())
+                {
+                    player.Hand.AddCard(CommunityCard);
+                }
+                
                 int score = HandEvaluator.EvaluateHand(player.Hand.Cards);
+                
                 if (score > highestScore)
                 {
                     highestScore = score;
@@ -604,6 +620,11 @@ public class Poker : MonoBehaviour
         }
 
         return highestScoringPlayer;
+    }
+
+    public void UpdateCommunityCard()
+    {
+        CommunityCard = Deck.DrawCard();
     }
     
 }

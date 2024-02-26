@@ -311,6 +311,7 @@ public class RuntimePoker
         _poker.Players[3].Hand.AddCard(hand4.Cards);
         Player winningPlayer = _poker.GetWinningPlayer();
         Assert.AreEqual(_poker.Players[0], winningPlayer);
+        //Assert.True(_poker._gameLoopDefinition.OfType<CommunityCardState>().Any());
         yield return null;
     }
     
