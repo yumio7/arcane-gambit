@@ -27,10 +27,10 @@ public class Opponent : Player
 
     private void calc_bid()
     {
-        int bid;
+        int bid = 0;
         int hand_score = HandEvaluator.EvaluateHand(Hand.Cards);
         //TODO: turn this number ^ into something between 0 and 1 using confidence and optimism
-        //TODO: calculate optimism
+        //TODO: calculate optimism2
         
         RespondToBid(bid);
     }
