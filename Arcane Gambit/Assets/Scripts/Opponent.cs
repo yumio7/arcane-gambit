@@ -22,7 +22,22 @@ public class Opponent : Player
     {
         // TODO: determine what scale this will be on
         this.conf = conf;
-        this.opt = 50;
+        opt = 50;
     }
 
+    private void calc_bid()
+    {
+        int bid;
+        int hand_score = HandEvaluator.EvaluateHand(Hand.Cards);
+        //TODO: turn this number ^ into something between 0 and 1 using confidence and optimism
+        //TODO: calculate optimism
+        
+        RespondToBid(bid);
+    }
+
+    public override void BidRequest(int bidToMatch)
+    {
+        base.BidRequest(bidToMatch);
+        calc_bid();
+    }
 }
