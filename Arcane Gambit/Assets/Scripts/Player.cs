@@ -29,6 +29,20 @@ public class Player
         IndexInManager = index;
         Name = name;
     }
+    
+    public Player(Player player)
+    {
+        // Creating deep copy of the provided player
+        this.Name = player.Name;
+        this.Hand = new Hand(player.Hand);
+        this.Alive = player.Alive;
+        this.OutOfBetting = player.OutOfBetting;
+        this.IndexInManager = player.IndexInManager;
+        this.CurrentBetAmount = player.CurrentBetAmount;
+        this.TotalChips = player.TotalChips;
+        this.DiscardedCards = new CardCollection(player.DiscardedCards);
+        this.BidToMatch = player.BidToMatch;
+    }
 
     public virtual void NewRound()
     {
@@ -122,5 +136,10 @@ public class Player
     public virtual void RespondToMulligan(int mulliganValue)
     {
         OnPlayerResponse?.Invoke(this, PlayerRequestType.Mulligan, mulliganValue);  //Invoke the event
+    }
+
+    public virtual void UpdateData(PokerData data)
+    {
+        
     }
 }

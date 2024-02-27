@@ -15,6 +15,15 @@ public class Hand : CardCollection
         MaximumHandSize = maximumHandSize;
     }
 
+    public Hand(Hand otherHand)
+    {
+        MaximumHandSize = otherHand.MaximumHandSize;
+        foreach (var card in otherHand.Cards)
+        {
+            Cards.Add(new Card(card));
+        }
+    }
+
     public void DrawCard(Deck deck)
     {
         if (Cards.Count < MaximumHandSize)

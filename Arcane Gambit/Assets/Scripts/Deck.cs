@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 ///<summary>
@@ -10,6 +12,12 @@ public class Deck : CardCollection
         AddStandardDeck();
     }
 
+    // Constructor that takes a deck and creates a deepcopy
+    public Deck(Deck otherDeck)
+    {
+        this.Cards = new List<Card>(otherDeck.Cards.Select(card => new Card(card.Suit, card.Rank)));
+    }
+    
     public override void Reset()
     {
         base.Reset();
@@ -33,4 +41,4 @@ public class Deck : CardCollection
             Cards[randomIndex] = temp;
         }
     }
-}
+} 

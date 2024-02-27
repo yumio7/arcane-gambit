@@ -9,11 +9,17 @@ using UnityEngine;
 ///</summary>
 public class CardCollection
 {
-    public List<Card> Cards { get; private set; }
+    public List<Card> Cards { get; protected set; }
 
     public CardCollection()
     {
         Cards = new List<Card>();
+    }
+    
+    // Deep copy constructor
+    public CardCollection(CardCollection original)
+    {
+        Cards = original.Cards.Select(card => new Card(card)).ToList();
     }
 
     public virtual Card DrawCard()

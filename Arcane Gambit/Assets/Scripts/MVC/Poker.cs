@@ -106,6 +106,10 @@ public class RoundEndState : GameState
     public override void OnEnter(Poker poker)
     {
         poker.EndRound();
+        foreach (Player player in poker.Players)
+        {
+            player.EndRound();
+        }
     }
 
     public override void Execute(Poker poker)
@@ -130,7 +134,17 @@ public class GameOverState : GameState
 
 public class CyclicList<T> : List<T>, IEnumerable<T>
 {
-    private int currentIndex = 0;
+    private int currentIndex;
+
+    public CyclicList() 
+    {
+    }
+
+    public CyclicList(CyclicList<T> other)
+    {
+        this.AddRange(other);
+        this.currentIndex = other.currentIndex;
+    }
 
     public T Current
     {
@@ -223,6 +237,23 @@ public enum PlayerRequestType
     // add more request types as needed
 }
 
+public struct PokerData
+{
+    public GameState PokerState;
+    public CyclicList<Player> Players;
+    public Player CurrentPlayer;
+    public Player BlindPlayer;
+    public Deck Deck;
+    public CardCollection DiscardPile;
+    public Card CommunityCard;
+    public int BidPot;
+    public int CurrentMinBid;
+    public int RoundCount;
+    public bool Busy;
+    public IBlindSetting Blind;
+    public CyclicList<GameState> GameLoopDefinition;
+}
+
 public class Poker : MonoBehaviour
 {
     public GameState PokerState { get; private set; } = new RoundStartState();
@@ -256,6 +287,45 @@ public class Poker : MonoBehaviour
         new BettingRoundState(),
         new RoundEndState()
     };
+    
+    //Rest of the poker class as defined 
+
+    public PokerData DeepCopy()
+    {
+        var gameStatesCopy = new CyclicList<GameState>(_gameLoopDefinition);
+
+        var playersCopy = new CyclicList<Player>();
+        foreach (var player in Players)
+        {
+            playersCopy.Add(new Player(player));
+        }
+
+        return new PokerData
+        {
+            PokerState = PokerState,
+            Players = playersCopy,
+            CurrentPlayer = new Player(CurrentPlayer),
+            BlindPlayer = new Player(BlindPlayer),
+            Deck = new Deck(Deck),
+            DiscardPile = new CardCollection(DiscardPile),
+            CommunityCard = CommunityCard,     
+            BidPot = BidPot,
+            CurrentMinBid = CurrentMinBid,
+            RoundCount = RoundCount,
+            Busy = Busy,
+            Blind = Blind,
+            GameLoopDefinition = gameStatesCopy
+        };
+    }
+
+    public void UpdateAIData()
+    {
+        PokerData data = DeepCopy();
+        foreach (Player player in Players)
+        {
+            player.UpdateData(data);
+        }
+    }
 
     #region TEMPORARY
 
@@ -422,6 +492,7 @@ public class Poker : MonoBehaviour
                 continue;
             }
             SetCurrentPlayer(player);
+            CurrentPlayer.UpdateData(DeepCopy());
             SendInputRequest(CurrentPlayer, PlayerRequestType.Bid);
             //Debug.Log("waiting for " + );
             while (_isWaitingForInput)
@@ -476,7 +547,7 @@ public class Poker : MonoBehaviour
 
             #endregion
             
-            
+            CurrentPlayer.UpdateData(DeepCopy());
             SendInputRequest(CurrentPlayer, PlayerRequestType.Mulligan);
             while (_isWaitingForInput)
             {

@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public struct Card
 {
 
@@ -18,6 +14,13 @@ public struct Card
         {
             Name = FormattedName();
         }
+    }
+
+    public Card(Card other)
+    {
+        Suit = other.Suit;
+        Rank = other.Rank;
+        Name = other.Name;
     }
 
     public string FormattedName()

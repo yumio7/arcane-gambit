@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public class Opponent : Player
 {
+    private PokerData _pokerData;
+    
     /// <summary>
     /// Confidence is the main modifier and is preset for each opponent
     /// </summary>
@@ -43,5 +45,10 @@ public class Opponent : Player
     {
         base.BidRequest(bidToMatch);
         calc_bid();
+    }
+
+    public override void UpdateData(PokerData data)
+    {
+        _pokerData = data;
     }
 }
