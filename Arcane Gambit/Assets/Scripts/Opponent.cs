@@ -30,7 +30,11 @@ public class Opponent : Player
         int bid = 0;
         int hand_score = HandEvaluator.EvaluateHand(Hand.Cards);
         //TODO: turn this number ^ into something between 0 and 1 using confidence and optimism
-        //TODO: calculate optimism2
+        //TODO: calculate optimism
+
+        //TODO: Community card needs to be taken into account
+        
+        //FIXME: game info struct could be used to make harder difficulties
         
         RespondToBid(bid);
     }
