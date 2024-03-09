@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PlayerType { Human, AI }
 public class Player
 {
     public delegate void PlayerResponseAction(Player player, PlayerRequestType requestType, int value); // delegate definition
     public event PlayerResponseAction OnPlayerResponse;  // Event declaration
     
     public string Name { get; protected set; }
+    public PlayerType Type { get; protected set; }
     public Hand Hand { get; protected set; }
     public bool Alive { get; protected set; } = true;
 
@@ -22,12 +24,22 @@ public class Player
 
     public int BidToMatch { get; protected set; } = 0;
 
+    public Player(int handSize, int startingChipAmount, int index, PlayerType playerType, string name = "")
+    {
+        Hand = new Hand(handSize);
+        TotalChips = startingChipAmount;
+        IndexInManager = index;
+        Name = name;
+        Type = playerType;
+    }
+
     public Player(int handSize, int startingChipAmount, int index, string name = "")
     {
         Hand = new Hand(handSize);
         TotalChips = startingChipAmount;
         IndexInManager = index;
         Name = name;
+        Type = PlayerType.AI;
     }
     
     public Player(Player player)

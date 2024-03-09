@@ -259,10 +259,10 @@ public class Poker : MonoBehaviour
     public GameState PokerState { get; private set; } = new RoundStartState();
     public CyclicList<Player> Players { get; private set; } = new CyclicList<Player>()
     {
-        new Player(5, 100, 0, "Player 1"),
-        new Player(5, 100, 1,"Player 2"),
-        new Player(5, 100, 2,"Player 3"),
-        new Player(5, 100, 3,"Player 4")
+        new Player(5, 100, 0, PlayerType.Human, "Player 1"),
+        new Player(5, 100, 1, PlayerType.AI,"Player 2"),
+        new Player(5, 100, 2, PlayerType.AI,"Player 3"),
+        new Player(5, 100, 3, PlayerType.AI,"Player 4")
     };
     public Player CurrentPlayer { get; private set; }
     public Player BlindPlayer { get; private set; }

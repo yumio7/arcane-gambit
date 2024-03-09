@@ -20,7 +20,7 @@ public class Opponent : Player
     public int opt { get; private set; }
 
     public Opponent(int handSize, int startingChipAmount, int index, string name = "", int conf = 5)
-        : base(handSize, startingChipAmount, index, name) 
+        : base(handSize, startingChipAmount, index, PlayerType.AI, name) 
     {
         // TODO: determine what scale this will be on
         this.conf = conf;
