@@ -17,7 +17,7 @@ public class Player
     public bool OutOfBetting { get; protected set; } = false;
     //represents this player's spot in the poker manager, this is here for convenience
     public int IndexInManager { get; }
-
+    public int RoundBetAmount { get; protected set; }
     public int CurrentBetAmount { get; protected set; }
     public int TotalChips { get; protected set; }
     public CardCollection DiscardedCards { get; protected set; } = new CardCollection();
@@ -55,6 +55,7 @@ public class Player
         this.DiscardedCards = new CardCollection(player.DiscardedCards);
         this.BidToMatch = player.BidToMatch;
         this.Type = player.Type;
+        this.RoundBetAmount = player.RoundBetAmount;
     }
 
     public virtual void NewRound()
@@ -67,6 +68,12 @@ public class Player
     public virtual void EndRound()
     {
         BidToMatch = 0;
+        CurrentBetAmount = 0;
+        RoundBetAmount = 0;
+    }
+
+    public virtual void ResetCurrentBidAmount()
+    {
         CurrentBetAmount = 0;
     }
 
@@ -107,6 +114,7 @@ public class Player
     {
         TotalChips -= amount;
         CurrentBetAmount += amount;
+        RoundBetAmount += amount;
     }
 
     public void GiveChips(int amount)

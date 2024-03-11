@@ -1854,9 +1854,10 @@ MonoBehaviour:
   pot_total_text: {fileID: 4421004384501083327}
   bet_to_you_text: {fileID: 6689117316686220322}
   bet_ui: {fileID: 2713960551094994704}
+  match_text: {fileID: 4583799097143789306}
   raise_slider: {fileID: 5502955687967932945}
-  raise_ammount_text: {fileID: 3765224397798879409}
-  muligan_ui: {fileID: 2288250755442279774}
+  raise_amount_text: {fileID: 3765224397798879409}
+  mulligan_ui: {fileID: 2288250755442279774}
   card_select_icons:
   - {fileID: 4417680480690415210}
   - {fileID: 7046809070433104671}

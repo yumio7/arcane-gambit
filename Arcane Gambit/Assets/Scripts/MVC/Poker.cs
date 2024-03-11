@@ -473,6 +473,11 @@ public class Poker : MonoBehaviour
 
         bool hasCompletedFullLoop = false;
         yield return null;
+        CurrentMinBid = 0;
+        foreach (Player player in Players)
+        {
+            player.ResetCurrentBidAmount();
+        }
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
         Debug.Log("blind: " + BlindPlayer.Name);
         if (forceBlind)

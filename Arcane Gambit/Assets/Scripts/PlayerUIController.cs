@@ -13,9 +13,10 @@ public class PlayerUIController : MonoBehaviour
     public Text pot_total_text;
     public Text bet_to_you_text;
     public GameObject bet_ui;
+    public Text match_text;
     public Slider raise_slider;
     [FormerlySerializedAs("raise_ammount_text")] public Text raise_amount_text;
-    public GameObject muligan_ui;
+    [FormerlySerializedAs("muligan_ui")] public GameObject mulligan_ui;
     public Image[] card_select_icons;
     [Header("Graphics")]
     public Sprite unchecked_sprite;
@@ -48,25 +49,25 @@ public class PlayerUIController : MonoBehaviour
             {
                 if (current_state is BettingRoundState || current_state is BlindBettingRoundState)
                 {
-                    if (bet_ui != null && muligan_ui != null)
+                    if (bet_ui != null && mulligan_ui != null)
                     {
                         bet_ui.SetActive(true);
-                        muligan_ui.SetActive(false);
+                        mulligan_ui.SetActive(false);
                     }       
                 } else if (current_state is MulliganRoundState)
                 {
-                    if (bet_ui != null && muligan_ui != null)
+                    if (bet_ui != null && mulligan_ui != null)
                     {
                         bet_ui.SetActive(false);
-                        muligan_ui.SetActive(true);
+                        mulligan_ui.SetActive(true);
                     }
                 }
             } else
             {
-                if (bet_ui != null && muligan_ui != null)
+                if (bet_ui != null && mulligan_ui != null)
                 {
                     bet_ui.SetActive(false);
-                    muligan_ui.SetActive(false);
+                    mulligan_ui.SetActive(false);
                 }
             }
             // Raise control
@@ -81,10 +82,11 @@ public class PlayerUIController : MonoBehaviour
                 current_raise = ((int)raise_slider.value) - (poker.CurrentMinBid - human_player.CurrentBetAmount);
             }
             // Table info
-            if (bet_to_you_text != null && pot_total_text != null)
+            if (bet_to_you_text != null && pot_total_text != null && match_text != null)
             {
                 pot_total_text.text = $"Pot Total: {poker.BidPot} | Highest Bid: {poker.CurrentMinBid}";
                 bet_to_you_text.text = $"Your Current Bet: {human_player.CurrentBetAmount}";
+                match_text.text = $"Match: {poker.CurrentMinBid} / Check";
             }
             // Mulligan control
             if (card_select_icons.Length == 5)
