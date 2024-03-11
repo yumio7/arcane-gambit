@@ -28,7 +28,6 @@ public class Opponent : Player
 
     private void calc_bid()
     {
-        int bid = 0;
         // the score from the hand evaluator
         int hand_score = HandEvaluator.EvaluateHand(Hand.Cards);
 
@@ -36,11 +35,11 @@ public class Opponent : Player
         float raw_score = Opponent.normalize_score(hand_score);
 
         // calculate optimism
-        this.opt = Random.Range(1, 6) + Random.Range(1,6);
+        opt = Random.Range(1, 6) + Random.Range(1,6);
 
         // apply modifiers
         raw_score *= conf_mod();
-        raw_score *= (this.opt * 0.2);
+        raw_score *= opt * 0.2f;
 
         if (raw_score > 1.85)
         {
@@ -48,7 +47,7 @@ public class Opponent : Player
         }
         else if (raw_score >= 1.35)
         {
-            Raise()
+            Raise();
         }
         else if (raw_score < 0.25)
         {
@@ -70,7 +69,7 @@ public class Opponent : Player
 
     private float conf_mod()
     {
-        return Math.Log(conf + 5, 10);
+        return (float)System.Math.Log(conf + 5, 10);
     }
 
     public override void BidRequest(int bidToMatch)
