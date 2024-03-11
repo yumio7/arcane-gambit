@@ -8,6 +8,9 @@ using System.Linq;
 ///</summary>
 public class Hand : CardCollection
 {
+    public delegate void HandUpdated(Hand reference);
+    public event HandUpdated OnHandUpdated;
+
     public int MaximumHandSize { get; private set; }
 
     public Hand(int maximumHandSize)
@@ -30,6 +33,7 @@ public class Hand : CardCollection
         {
             var card = deck.DrawCard();
             Cards.Add(card);
+            OnHandUpdated?.Invoke(this);
         }
         else
         {
@@ -43,6 +47,7 @@ public class Hand : CardCollection
         {
             var card = Cards[index];
             Cards.RemoveAt(index);
+            OnHandUpdated?.Invoke(this);
             return card;
         }
         else
@@ -69,7 +74,7 @@ public class Hand : CardCollection
                 throw new IndexOutOfRangeException();
             }
         }
-
+        OnHandUpdated?.Invoke(this);
         return discardedCards;
     }
 
@@ -78,6 +83,7 @@ public class Hand : CardCollection
         if (Cards.Contains(card))
         {
             Cards.Remove(card);
+            OnHandUpdated?.Invoke(this);
         }
         else
         {

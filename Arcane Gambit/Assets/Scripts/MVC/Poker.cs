@@ -328,12 +328,6 @@ public class Poker : MonoBehaviour
         }
     }
 
-    #region TEMPORARY
-
-    [SerializeField] private WorldHandComponent _worldHandComponent;
-
-    #endregion
-
     private void OnEnable()
     {
         foreach (Player player in Players)
@@ -543,16 +537,6 @@ public class Poker : MonoBehaviour
                 continue;
             }
             SetCurrentPlayer(player);
-
-            #region TEMPORARY_HAND_DISPLAY
-
-            _worldHandComponent?.ClearHand();
-            foreach (Card card in CurrentPlayer.Hand.Cards)
-            {
-                _worldHandComponent?.AddCard(card);
-            }
-
-            #endregion
             
             CurrentPlayer.UpdateData(DeepCopy());
             SendInputRequest(CurrentPlayer, PlayerRequestType.Mulligan);

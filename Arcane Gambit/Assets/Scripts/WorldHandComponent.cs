@@ -46,6 +46,7 @@ public class WorldHandComponent : MonoBehaviour
             // Create new prefab for card
             GameObject newCardPrefab = Instantiate(card_base_prefab);
             newCardPrefab.transform.position = card_anchor.position;
+            newCardPrefab.transform.rotation = card_anchor.rotation;
             newCardPrefab.transform.SetParent(card_anchor);
             CardVisualizer cardVisualizer = newCardPrefab.GetComponent<CardVisualizer>();
             cardVisualizer.SetCard(card);
