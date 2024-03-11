@@ -44,7 +44,7 @@ public class Opponent : Player
 
         if (raw_score > 1.85)
         {
-            bid = TotalChips;
+            RespondToBid(TotalChips);
         }
         else if (raw_score >= 1.35)
         {
