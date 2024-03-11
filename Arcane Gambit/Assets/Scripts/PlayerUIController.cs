@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class PlayerUIController : MonoBehaviour
@@ -13,7 +14,7 @@ public class PlayerUIController : MonoBehaviour
     public Text bet_to_you_text;
     public GameObject bet_ui;
     public Slider raise_slider;
-    public Text raise_ammount_text;
+    [FormerlySerializedAs("raise_ammount_text")] public Text raise_amount_text;
     public GameObject muligan_ui;
     public Image[] card_select_icons;
     [Header("Graphics")]
@@ -71,19 +72,19 @@ public class PlayerUIController : MonoBehaviour
             // Raise control
             if (raise_slider != null)
             {
-                raise_slider.minValue = poker.CurrentMinBid + 1;
+                raise_slider.minValue = poker.CurrentMinBid - human_player.CurrentBetAmount + 1;
                 raise_slider.maxValue = human_player.TotalChips;
-                if (raise_ammount_text != null)
+                if (raise_amount_text != null)
                 {
-                    raise_ammount_text.text = raise_slider.value.ToString();
+                    raise_amount_text.text = raise_slider.value.ToString();
                 }
-                current_raise = (int)raise_slider.value;
+                current_raise = ((int)raise_slider.value) - (poker.CurrentMinBid - human_player.CurrentBetAmount);
             }
             // Table info
             if (bet_to_you_text != null && pot_total_text != null)
             {
-                pot_total_text.text = "Pot Total: " + poker.BidPot;
-                bet_to_you_text.text = "Current Bet: " + poker.CurrentMinBid;
+                pot_total_text.text = $"Pot Total: {poker.BidPot} | Highest Bid: {poker.CurrentMinBid}";
+                bet_to_you_text.text = $"Your Current Bet: {human_player.CurrentBetAmount}";
             }
             // Mulligan control
             if (card_select_icons.Length == 5)

@@ -270,7 +270,8 @@ public class Poker : MonoBehaviour
     public CardCollection DiscardPile { get; private set; } = new CardCollection();
     public Card CommunityCard { get; private set; }
     public int BidPot { get; private set; } = 0; 
-    public int CurrentMinBid { get; private set; } = 1;
+    public int CurrentMinBid { get; private set; } = 0;
+    public int BlindBid { get; private set; } = 1;
     public int RoundCount { get; private set; } = 0;
     public bool Busy { get; private set; } = false;
     public IBlindSetting Blind;
@@ -420,6 +421,7 @@ public class Poker : MonoBehaviour
 
     public void NewRound()
     {
+        CurrentMinBid = 0;
         Deck.Reset();
         DiscardPile.Reset();
         RoundCount++;
@@ -564,7 +566,7 @@ public class Poker : MonoBehaviour
 
     private void ProcessBlind()
     {
-        BlindPlayer.BidRequest(CurrentMinBid);
+        BlindPlayer.BidRequest(BlindBid);
         BlindPlayer.Match();
     }
     
@@ -580,7 +582,7 @@ public class Poker : MonoBehaviour
 
     public void IncreaseBlind()
     {
-        this.CurrentMinBid++;
+        this.BlindBid++;
     }
 
     public void SetCurrentIndexForPlayers(int index)
@@ -610,7 +612,7 @@ public class Poker : MonoBehaviour
         switch(requestType)
         {
             case PlayerRequestType.Bid:
-                HandleBidResponse(value);
+                HandleBidResponse(player, value);
                 break;
             case PlayerRequestType.Mulligan:
                 HandleMulliganResponse(player, value);
@@ -621,9 +623,9 @@ public class Poker : MonoBehaviour
         _isWaitingForInput = false;
     }
     
-    public void HandleBidResponse(int bidValue)
+    public void HandleBidResponse(Player player, int bidValue)
     {
-        CurrentMinBid = Mathf.Max(CurrentMinBid, bidValue);
+        CurrentMinBid = Mathf.Max(CurrentMinBid, player.CurrentBetAmount);
         if (bidValue >= 0)
         {
             BidPot += bidValue;

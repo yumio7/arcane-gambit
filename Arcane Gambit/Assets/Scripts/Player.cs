@@ -54,6 +54,7 @@ public class Player
         this.TotalChips = player.TotalChips;
         this.DiscardedCards = new CardCollection(player.DiscardedCards);
         this.BidToMatch = player.BidToMatch;
+        this.Type = player.Type;
     }
 
     public virtual void NewRound()
