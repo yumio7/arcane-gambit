@@ -1,4 +1,4 @@
-public struct Card
+public class Card
 {
 
     public SuitType Suit { get; private set; }

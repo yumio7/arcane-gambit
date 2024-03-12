@@ -423,12 +423,8 @@ public class Poker : MonoBehaviour
 
     public void EndRound()
     {
-        if (_gameLoopDefinition.OfType<CommunityCardState>().Any())
-        {
-            
-        }
-        
         Player winningPlayer = GetWinningPlayer();
+        CommunityCard = null;
         if (winningPlayer != null)
         {
             winningPlayer.GiveChips(BidPot);
