@@ -88,12 +88,10 @@ public class WorldHandComponent : MonoBehaviour
     {
         if (card_anchor != null)
         {
-            float start_x_offset = card_anchor.position.x - (((card_width + card_spacing) * (cards_in_hand.Count - 1)) / 2);
+            Vector3 start_offset_pos = card_anchor.position - ((((card_width + card_spacing) * (cards_in_hand.Count - 1)) / 2) * card_anchor.right);
             for (int i = 0; i < cards_in_hand.Count; i++)
             {
-                cards_in_hand[i].target_position = new Vector3(start_x_offset + (i * (card_width + card_spacing)), 
-                    card_anchor.position.y, 
-                    card_anchor.position.z);
+                cards_in_hand[i].target_position = start_offset_pos + ((i * (card_width + card_spacing)) * (card_anchor.right));
             }
         }
     }
