@@ -18,9 +18,11 @@ public class PlayerUIController : MonoBehaviour
     [FormerlySerializedAs("raise_ammount_text")] public Text raise_amount_text;
     [FormerlySerializedAs("muligan_ui")] public GameObject mulligan_ui;
     public Image[] card_select_icons;
+    public Image table_turn_indic_icon;
     [Header("Graphics")]
     public Sprite unchecked_sprite;
     public Sprite checked_sprite;
+    public Sprite[] turn_sprites;
 
     // Internal vars
     private Player human_player;
@@ -100,6 +102,16 @@ public class PlayerUIController : MonoBehaviour
                     {
                         card_select_icons[i].sprite = unchecked_sprite;
                     }
+                }
+            }
+            // Turn indicator
+            if (table_turn_indic_icon != null && turn_sprites.Length == 4)
+            {
+                CyclicList<Player> players = poker.Players;
+                Player turn_player = poker.CurrentPlayer;
+                int index = players.IndexOf(turn_player);
+                if (index > -1 && index < players.Count) {
+                    table_turn_indic_icon.sprite = turn_sprites[players.IndexOf(turn_player)];
                 }
             }
         }
