@@ -8,7 +8,10 @@ public class Player
 {
     public delegate void PlayerResponseAction(Player player, PlayerRequestType requestType, int value); // delegate definition
     public event PlayerResponseAction OnPlayerResponse;  // Event declaration
-    
+
+    public delegate void PlayerFoldAction(Player reference);
+    public event PlayerFoldAction OnPlayerFold;
+
     public string Name { get; protected set; }
     public PlayerType Type { get; protected set; }
     public Hand Hand { get; protected set; }
@@ -108,6 +111,7 @@ public class Player
     {
         OutOfBetting = true;
         RespondToBid(-1);
+        OnPlayerFold?.Invoke(this);
     }
 
     protected void TakeChipsForBid(int amount)
