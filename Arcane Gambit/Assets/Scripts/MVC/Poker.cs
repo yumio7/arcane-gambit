@@ -8,6 +8,13 @@ using UnityEngine.Serialization;
 
 public abstract class GameState
 {
+    protected float delay = 1f;
+    
+    public GameState(float delay = 1f)
+    {
+        this.delay = delay;
+    }
+    
     public virtual void OnEnter(Poker poker) { }
     public abstract void Execute(Poker poker);
     public virtual void OnExit(Poker poker) { }
@@ -15,6 +22,8 @@ public abstract class GameState
 
 public class WaitingState : GameState
 {
+    public WaitingState(float delay = 1f) : base(delay) { }
+    
     public override void Execute(Poker poker)
     {
         // Logic for Waiting
@@ -23,6 +32,8 @@ public class WaitingState : GameState
 
 public class RoundStartState : GameState
 {
+    public RoundStartState(float delay = 1f) : base(delay) { }
+    
     public override void OnEnter(Poker poker)
     {
         foreach (Player player in poker.Players)
@@ -42,12 +53,15 @@ public class RoundStartState : GameState
     public override void Execute(Poker poker)
     {
         if (poker.Busy) { return; }
-        poker.ProceedGameState();
+        Debug.Log(poker.PokerState);
+        poker.ProceedGameState(delay);
     }
 }
 
 public class BettingRoundState : GameState
 {
+    public BettingRoundState(float delay = 1f) : base(delay) { }
+    
     public override void OnEnter(Poker poker)
     {
         poker.StartBettingSequence();
@@ -56,12 +70,14 @@ public class BettingRoundState : GameState
     public override void Execute(Poker poker)
     {
         if (poker.Busy) { return; }
-        poker.ProceedGameState();
+        poker.ProceedGameState(delay);
     }
 }
 
 public class BlindBettingRoundState : GameState
 {
+    public BlindBettingRoundState(float delay = 1f) : base(delay) { }
+    
     public override void OnEnter(Poker poker)
     {
         poker.StartBettingSequence(true);
@@ -70,12 +86,14 @@ public class BlindBettingRoundState : GameState
     public override void Execute(Poker poker)
     {
         if (poker.Busy) { return; }
-        poker.ProceedGameState();
+        poker.ProceedGameState(delay);
     }
 }
 
 public class MulliganRoundState : GameState
 {
+    public MulliganRoundState(float delay = 1f) : base(delay) { }
+    
     public override void OnEnter(Poker poker)
     {
         poker.StartMulliganSequence();
@@ -83,12 +101,14 @@ public class MulliganRoundState : GameState
     public override void Execute(Poker poker)
     {
         if (poker.Busy) { return; }
-        poker.ProceedGameState();
+        poker.ProceedGameState(delay);
     }
 }
 
 public class CommunityCardState : GameState
 {
+    public CommunityCardState(float delay = 1f) : base(delay) { }
+    
     public override void OnEnter(Poker poker)
     {
         poker.UpdateCommunityCard();
@@ -97,35 +117,40 @@ public class CommunityCardState : GameState
     public override void Execute(Poker poker)
     {
         if (poker.Busy) { return; }
-        poker.ProceedGameState();
+        poker.ProceedGameState(delay);
     }
 }
 
 public class RoundEndState : GameState
 {
+    public RoundEndState(float delay = 1f) : base(delay) { }
+    
     public override void OnEnter(Poker poker)
     {
         poker.EndRound();
         foreach (Player player in poker.Players)
         {
             player.EndRound();
+            player.HideHand();
         }
     }
 
     public override void Execute(Poker poker)
     {
         if (poker.Busy) { return; }
-        poker.ProceedGameState();
+        poker.ProceedGameState(delay);
     }
 
     public override void OnExit(Poker poker)
     {
-        
+
     }
 }
 
 public class GameOverState : GameState
 {
+    public GameOverState(float delay = 1f) : base(delay) { }
+    
     public override void Execute(Poker poker)
     {
         
@@ -278,15 +303,18 @@ public class Poker : MonoBehaviour
 
     private Coroutine _currentProcess;
     private bool _isWaitingForInput = false;
+    private Coroutine _pauseCoroutine;
+    private Coroutine _unpauseCoroutine;
+    private Coroutine _proceedGameStateCoroutine;
     private readonly CyclicList<GameState> _gameLoopDefinition = new CyclicList<GameState>()
     {
-        new RoundStartState(),
-        new BlindBettingRoundState(),
-        new MulliganRoundState(),
-        new BettingRoundState(),
-        new CommunityCardState(),
-        new BettingRoundState(),
-        new RoundEndState()
+        new RoundStartState(1),
+        new BlindBettingRoundState(0.5f),
+        new MulliganRoundState(0.5f),
+        new BettingRoundState(0.5f),
+        new CommunityCardState(0.5f),
+        new BettingRoundState(0.5f),
+        new RoundEndState(1)
     };
     
     //Rest of the poker class as defined 
@@ -389,7 +417,11 @@ public class Poker : MonoBehaviour
         }
 
         #endregion
-        
+
+        if (Busy)
+        {
+            return;
+        }
         PokerState.Execute(this);
         
     }
@@ -404,6 +436,37 @@ public class Poker : MonoBehaviour
         Busy = false;
     }
 
+    public void PauseProcesses(float duration)
+    {
+        if (_pauseCoroutine != null)
+        {
+            StopCoroutine(_pauseCoroutine);
+        }
+        _pauseCoroutine = StartCoroutine(PauseProcessesCoroutine(duration));
+    }
+
+    private IEnumerator PauseProcessesCoroutine(float duration)
+    {
+        Busy = true;
+        yield return new WaitForSeconds(duration);
+        Busy = false;
+    }
+
+    public void UnpauseProcesses(float delay)
+    {
+        if (_unpauseCoroutine != null)
+        {
+            StopCoroutine(_unpauseCoroutine);
+        }
+        _unpauseCoroutine = StartCoroutine(UnpauseProcessesCoroutine(delay));
+    }
+
+    private IEnumerator UnpauseProcessesCoroutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Busy = false;
+    }
+
     /// <summary>
     /// Proceeds to the next state of the poker game.
     /// </summary>
@@ -411,6 +474,23 @@ public class Poker : MonoBehaviour
     {
         _gameLoopDefinition.Next();
         SwitchState(_gameLoopDefinition.Current);
+    }
+    
+    public void ProceedGameState(float delay)
+    {
+        if (_proceedGameStateCoroutine != null)
+        {
+            StopCoroutine(_proceedGameStateCoroutine);
+        }
+        _proceedGameStateCoroutine = StartCoroutine(GameStateDelayCoroutine(delay));
+    }
+
+    private IEnumerator GameStateDelayCoroutine(float delay)
+    {
+        PauseProcesses();
+        yield return new WaitForSeconds(delay);
+        UnpauseProcesses();
+        ProceedGameState();
     }
 
     public void NewRound()
@@ -461,7 +541,8 @@ public class Poker : MonoBehaviour
     {
         PauseProcesses();
 
-        bool hasCompletedFullLoop = false;
+        //bool hasCompletedFullLoop = false;
+        int counter = 0;
         yield return null;
         CurrentMinBid = 0;
         foreach (Player player in Players)
@@ -478,7 +559,8 @@ public class Poker : MonoBehaviour
         
         do
         {
-            
+            counter++;
+            Debug.Log(counter);
             //Debug.Log("betting");
             Player player = Players.Current;
             Debug.Log(player.Name);
@@ -499,15 +581,15 @@ public class Poker : MonoBehaviour
             }
 
             Players.Next();
-            if (Players.Current == BlindPlayer)
+            /*if (Players.Current == BlindPlayer)
             {
                 hasCompletedFullLoop = true;
-            }
-        } while (!AreAllPlayersMatchingHighestBet() || !hasCompletedFullLoop);
+            }*/
+        } while (!AreAllPlayersMatchingHighestBet() || counter < Players.Count);
         
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
         Debug.Log("finish");
-        UnpauseProcesses();
+        UnpauseProcesses(1f);
     }
     
     public void StartMulliganSequence()
@@ -546,7 +628,7 @@ public class Poker : MonoBehaviour
         
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
         Debug.Log("finish");
-        UnpauseProcesses();
+        UnpauseProcesses(1f);
     }
 
     private void ProcessBlind()
@@ -683,6 +765,11 @@ public class Poker : MonoBehaviour
     public void UpdateCommunityCard()
     {
         CommunityCard = Deck.DrawCard();
+    }
+
+    public int GetAmountOfAlivePlayers()
+    {
+        return Players.Count(player => player.Alive);
     }
     
 }

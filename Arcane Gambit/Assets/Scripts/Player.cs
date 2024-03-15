@@ -114,6 +114,11 @@ public class Player
         OnPlayerFold?.Invoke(this);
     }
 
+    public virtual void HideHand()
+    {
+        OnPlayerFold?.Invoke(this);
+    }
+
     protected void TakeChipsForBid(int amount)
     {
         TotalChips -= amount;

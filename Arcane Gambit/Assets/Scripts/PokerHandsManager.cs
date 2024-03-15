@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,6 +32,18 @@ public class PokerHandsManager : MonoBehaviour
             }
         }
     }
+
+    /*private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            // Put your custom action here
+            foreach (Player player in poker.Players)
+            {
+                player.Hand.UpdateVisual();
+            }
+        }
+    }*/
 
     // Updates a speicifc hand's world hand component
     private void FoldHandComponent(Player reference)

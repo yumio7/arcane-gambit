@@ -90,4 +90,9 @@ public class Hand : CardCollection
             Debug.Log("This card is not in the hand");
         }
     }
+
+    public void UpdateVisual()
+    {
+        OnHandUpdated?.Invoke(this);
+    }
 }

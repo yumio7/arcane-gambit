@@ -87,7 +87,7 @@ public class PlayerUIController : MonoBehaviour
             if (bet_to_you_text != null && pot_total_text != null && match_text != null)
             {
                 pot_total_text.text = $"Pot Total: {poker.BidPot} | Highest Bid: {poker.CurrentMinBid}";
-                bet_to_you_text.text = $"Your Current Bet: {human_player.CurrentBetAmount}";
+                bet_to_you_text.text = $"Phase: {poker.PokerState} | Your Current Bet: {human_player.CurrentBetAmount}";
                 match_text.text = $"Match: {poker.CurrentMinBid} / Check";
             }
             // Mulligan control
