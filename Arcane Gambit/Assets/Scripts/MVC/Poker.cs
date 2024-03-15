@@ -309,11 +309,11 @@ public class Poker : MonoBehaviour
     private readonly CyclicList<GameState> _gameLoopDefinition = new CyclicList<GameState>()
     {
         new RoundStartState(1),
-        new BlindBettingRoundState(0.5f),
-        new MulliganRoundState(0.5f),
-        new BettingRoundState(0.5f),
+        new BlindBettingRoundState(0.1f),
+        new MulliganRoundState(0.1f),
+        new BettingRoundState(0.1f),
         new CommunityCardState(0.5f),
-        new BettingRoundState(0.5f),
+        new BettingRoundState(0.1f),
         new RoundEndState(1)
     };
     
