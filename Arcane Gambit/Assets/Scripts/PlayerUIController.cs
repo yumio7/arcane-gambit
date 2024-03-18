@@ -14,6 +14,7 @@ public class PlayerUIController : MonoBehaviour
     public Text bet_to_you_text;
     public GameObject bet_ui;
     public Text match_text;
+    public Text bet_raise_text;
     public Slider raise_slider;
     [FormerlySerializedAs("raise_ammount_text")] public Text raise_amount_text;
     [FormerlySerializedAs("muligan_ui")] public GameObject mulligan_ui;
@@ -85,11 +86,24 @@ public class PlayerUIController : MonoBehaviour
                 current_raise = ((int)raise_slider.value) - (poker.CurrentMinBid - human_player.CurrentBetAmount);
             }
             // Table info
-            if (bet_to_you_text != null && pot_total_text != null && match_text != null)
+            if (bet_to_you_text != null && pot_total_text != null && match_text != null && bet_raise_text != null)
             {
-                pot_total_text.text = $"Pot Total: {poker.BidPot} | Highest Bid: {poker.CurrentMinBid}";
-                bet_to_you_text.text = $"Phase: {poker.PokerState} | Your Current Bet: {human_player.CurrentBetAmount}";
-                match_text.text = $"Match: {poker.CurrentMinBid} / Check";
+                int match_ammount = Mathf.Max(poker.CurrentMinBid - human_player.CurrentBetAmount, 0);
+
+                // | Highest Bid: {poker.CurrentMinBid}
+                pot_total_text.text = $"Pot Total: {poker.BidPot} | (Your round bet: {human_player.CurrentBetAmount})";
+                bet_to_you_text.text = $"Phase: {poker.PokerState}";
+
+                if (match_ammount > 0)
+                {
+                    match_text.text = $"MATCH: {match_ammount}";
+                    bet_raise_text.text = "RAISE";
+                } else
+                {
+                    match_text.text = "CHECK";
+                    bet_raise_text.text = "BET";
+                }
+                
             }
             // Mulligan control
             if (card_select_icons.Length == 5)
