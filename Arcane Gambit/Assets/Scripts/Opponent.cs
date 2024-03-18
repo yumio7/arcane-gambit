@@ -66,6 +66,12 @@ public class Opponent : Player
         // game info struct could be used to make harder difficulties
     }
 
+    private void calc_mulligan()
+    {
+        //TEMP
+        RespondToMulligan(0);
+    }
+
     static public float normalize_score(int hand_score)
     {
         return (float)hand_score / 8000014;
@@ -80,6 +86,11 @@ public class Opponent : Player
     {
         base.BidRequest(bidToMatch);
         calc_bid();
+    }
+
+    public override void MulliganRequest()
+    {
+        calc_mulligan();
     }
 
     public override void UpdateData(PokerData data)
