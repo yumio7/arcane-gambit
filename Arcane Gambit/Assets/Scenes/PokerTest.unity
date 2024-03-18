@@ -815,9 +815,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5393815405153836306, guid: 9ecfe3353c7814147af35c9e2fbb1a3c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5513322041474942755, guid: 9ecfe3353c7814147af35c9e2fbb1a3c, type: 3}
       propertyPath: m_Name
       value: player_ui
+      objectReference: {fileID: 0}
+    - target: {fileID: 6051717060685057426, guid: 9ecfe3353c7814147af35c9e2fbb1a3c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9098597795912748063, guid: 9ecfe3353c7814147af35c9e2fbb1a3c, type: 3}
       propertyPath: m_AnchorMax.y

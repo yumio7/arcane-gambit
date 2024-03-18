@@ -19,6 +19,7 @@ public class PlayerUIController : MonoBehaviour
     [FormerlySerializedAs("muligan_ui")] public GameObject mulligan_ui;
     public Image[] card_select_icons;
     public Image table_turn_indic_icon;
+    public Slider hand_strength_slider;
     [Header("Graphics")]
     public Sprite unchecked_sprite;
     public Sprite checked_sprite;
@@ -112,6 +113,24 @@ public class PlayerUIController : MonoBehaviour
                 int index = players.IndexOf(turn_player);
                 if (index > -1 && index < players.Count) {
                     table_turn_indic_icon.sprite = turn_sprites[players.IndexOf(turn_player)];
+                }
+            }
+            // Hand Strengh Slider
+            if (hand_strength_slider != null)
+            {
+                if (human_player.Hand.Cards != null)
+                {
+                    hand_strength_slider.minValue = 0;
+                    hand_strength_slider.maxValue = 8000014; //8,000,014
+
+                    if (!human_player.OutOfBetting)
+                    {
+                        int hand_score = HandEvaluator.EvaluateHand(human_player.Hand.Cards);
+                        hand_strength_slider.value = hand_score;
+                    } else
+                    {
+                        hand_strength_slider.value = 0;
+                    }                  
                 }
             }
         }

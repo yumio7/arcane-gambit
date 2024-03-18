@@ -285,9 +285,9 @@ public class Poker : MonoBehaviour
     public CyclicList<Player> Players { get; private set; } = new CyclicList<Player>()
     {
         new Player(5, 100, 0, PlayerType.Human, "Player 1"),
-        new Player(5, 100, 1, PlayerType.AI,"Player 2"),
-        new Player(5, 100, 2, PlayerType.AI,"Player 3"),
-        new Player(5, 100, 3, PlayerType.AI,"Player 4")
+        new Opponent(5, 100, 1),
+        new Opponent(5, 100, 1),
+        new Opponent(5, 100, 1)
     };
     public Player CurrentPlayer { get; private set; }
     public Player BlindPlayer { get; private set; }
