@@ -41,18 +41,22 @@ public class Opponent : Player
         raw_score *= conf_mod();
         raw_score *= opt * 0.2f;
 
+        // if raw is cloese to 2.0 go all in
         if (raw_score > 1.85)
         {
             RespondToBid(TotalChips);
         }
+        // if raw a bit above 1.0 raise the bid
         else if (raw_score >= 1.35)
         {
             Raise();
         }
+        // if the raw is close to 0.0 fold
         else if (raw_score < 0.25)
         {
             Fold();
         }
+        // otherwise stay
         else 
         {
             Match();
