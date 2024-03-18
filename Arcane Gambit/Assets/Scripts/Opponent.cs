@@ -68,7 +68,7 @@ public class Opponent : Player
 
     static public float normalize_score(int hand_score)
     {
-        return hand_score / 8000014;
+        return (float)hand_score / 8000014;
     }
 
     private float conf_mod()
