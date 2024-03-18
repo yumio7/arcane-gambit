@@ -52,7 +52,7 @@ public class Opponent : Player
             Raise();
         }
         // if the raw is close to 0.0 fold
-        else if (raw_score < 0.25)
+        else if (raw_score < 0.25 /*&& PokerState != BlindBettingRoundState*/)
         {
             Fold();
         }
