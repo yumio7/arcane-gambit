@@ -386,7 +386,6 @@ public class Poker : MonoBehaviour
 
         Blind = new IncrementalBlind(this);
         SwitchState(_gameLoopDefinition[0]);
-        UpdateAIData();
     }
 
     void Update()
@@ -433,10 +432,10 @@ public class Poker : MonoBehaviour
         
     }
 
-    private void FixedUpdate()
+    /*private void FixedUpdate()
     {
         UpdateAIData();
-    }
+    }*/
 
     public void PauseProcesses()
     {
@@ -571,6 +570,10 @@ public class Poker : MonoBehaviour
         
         do
         {
+            /*if ( )
+            {
+                
+            }*/
             counter++;
             Debug.Log(counter);
             //Debug.Log("betting");

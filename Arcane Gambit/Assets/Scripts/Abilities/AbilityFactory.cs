@@ -20,7 +20,7 @@ public class AbilityFactory
 
     public AbilityFactory AddInput()
     {
-        this._ability.AddInput();
+        this._ability.RequestInput();
         return this;
     }
 

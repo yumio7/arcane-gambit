@@ -1,6 +1,6 @@
 public class Card
 {
-
+    public CardCollection Owner { get; set; }
     public SuitType Suit { get; private set; }
     public int Rank { get; private set; }
     public string Name { get; private set; }
@@ -32,4 +32,5 @@ public class Card
     {
         return FormattedName();
     }
+
 }

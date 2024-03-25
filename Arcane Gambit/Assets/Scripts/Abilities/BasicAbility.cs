@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class BasicAbility : AbstractAbility
 {
-    public override void Activate()
+    public override void Activate(AbilityManager abilityManager)
     {
         throw new System.NotImplementedException();
     }
 
-    public override void AddInput()
+    public override void RequestInput()
     {
         throw new System.NotImplementedException();
     }

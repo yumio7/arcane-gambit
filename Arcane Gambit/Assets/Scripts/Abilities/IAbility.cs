@@ -4,10 +4,11 @@ using UnityEngine;
 
 public interface IAbility
 {
-    public IAbility NextCard { get; set; }
+    public IAbility NextAbility { get; set; }
     public string AbilityName { get; set; }
     
-    public void Activate();
-    public void Process();
-    public void AddInput();
+    public void Activate(AbilityManager abilityManager);
+    public IEnumerator Process(AbilityManager abilityManager);
+    public void Finish(AbilityManager abilityManager);
+    public void RequestInput();
 }

@@ -33,7 +33,7 @@ public class PokerHandsManager : MonoBehaviour
         }
     }
 
-    /*private void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -43,7 +43,7 @@ public class PokerHandsManager : MonoBehaviour
                 player.Hand.UpdateVisual();
             }
         }
-    }*/
+    }
 
     // Updates a speicifc hand's world hand component
     private void FoldHandComponent(Player reference)

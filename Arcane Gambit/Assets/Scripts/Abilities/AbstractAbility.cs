@@ -4,20 +4,25 @@ using UnityEngine;
 
 public abstract class AbstractAbility : IAbility
 {
-    public IAbility NextCard { get; set; }
+    public IAbility NextAbility { get; set; }
     public string AbilityName { get; set; }
-    public virtual void Activate()
+
+    public virtual void Activate(AbilityManager abilityManager)
     {
-        this.Process();
-        NextCard?.Activate();
+        throw new System.NotImplementedException();
     }
 
-    public virtual void Process()
+    public IEnumerator Process(AbilityManager abilityManager)
     {
-        
+        yield break;
     }
 
-    public virtual void AddInput()
+    public virtual void Finish(AbilityManager abilityManager)
+    {
+        NextAbility?.Activate(abilityManager);
+    }
+
+    public virtual void RequestInput()
     {
         throw new System.NotImplementedException();
     }

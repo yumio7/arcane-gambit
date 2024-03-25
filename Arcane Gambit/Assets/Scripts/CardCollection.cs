@@ -26,6 +26,7 @@ public class CardCollection
     {
         var card = Cards.First();
         Cards.RemoveAt(0);
+        card.Owner = null;
         return card;
     }
 
@@ -47,6 +48,7 @@ public class CardCollection
 
     public void AddCard(Card card)
     {
+        card.Owner = this;
         Cards.Add(card);
     }
 
@@ -54,7 +56,14 @@ public class CardCollection
     {
         foreach (Card card in cards)
         {
+            card.Owner = this;
             Cards.Add(card);
         }
+    }
+
+    public void Remove(Card card)
+    {
+        card.Owner = null;
+        Cards.Remove(card);
     }
 }

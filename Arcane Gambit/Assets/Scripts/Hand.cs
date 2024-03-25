@@ -32,6 +32,7 @@ public class Hand : CardCollection
         if (Cards.Count < MaximumHandSize)
         {
             var card = deck.DrawCard();
+            card.Owner = this;
             Cards.Add(card);
             OnHandUpdated?.Invoke(this);
         }
@@ -47,6 +48,7 @@ public class Hand : CardCollection
         {
             var card = Cards[index];
             Cards.RemoveAt(index);
+            card.Owner = null;
             OnHandUpdated?.Invoke(this);
             return card;
         }
@@ -83,6 +85,7 @@ public class Hand : CardCollection
         if (Cards.Contains(card))
         {
             Cards.Remove(card);
+            card.Owner = null;
             OnHandUpdated?.Invoke(this);
         }
         else
