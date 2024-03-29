@@ -570,10 +570,10 @@ public class Poker : MonoBehaviour
         
         do
         {
-            /*if ( )
+            if (GetAmountOfAlivePlayers() <= 1)
             {
                 
-            }*/
+            }
             counter++;
             Debug.Log(counter);
             //Debug.Log("betting");

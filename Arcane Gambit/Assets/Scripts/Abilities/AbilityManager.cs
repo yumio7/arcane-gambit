@@ -18,8 +18,16 @@ public class AbilityManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Comma))
         {
-            IAbility thing = new SwapCardAbility(_poker.Players[0].Hand.Cards[0], _poker.Players[1].Hand.Cards[0]);
-            thing.Activate(this);
+            //IAbility thing = new SwapCardAbility(_poker.Players[0].Hand.Cards[0], _poker.Players[1].Hand.Cards[0]);
+            //thing.Activate(this);
+            //IAbility thing = new SwapCardAbility(new ConcreteAbilityInput<Card>(_poker.Players[0].Hand.Cards[0]), new AbilityInput<Card>());
+            IAbility thing2 = new SwapCardAbility(new ConcreteAbilityInput<Card>(_poker.Players[0].Hand.Cards[0]), new ConcreteAbilityInput<Card>(_poker.Players[1].Hand.Cards[0]));
+            ActivateAbility(thing2);
         }
+    }
+    
+    public void ActivateAbility(IAbility ability)
+    {
+        ability.Activate(this);
     }
 }
