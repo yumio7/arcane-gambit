@@ -24,6 +24,16 @@ public class AbilityManager : MonoBehaviour
             IAbility thing2 = new SwapCardAbility(new ConcreteAbilityInput<Card>(_poker.Players[0].Hand.Cards[0]), new ConcreteAbilityInput<Card>(_poker.Players[1].Hand.Cards[0]));
             ActivateAbility(thing2);
         }
+
+        if (Input.GetKeyDown(KeyCode.Period))
+        {
+            IAbility thing1 = new ModifyCardAbility(
+                new ConcreteAbilityInput<Card>(_poker.Players[0].Hand.Cards[0],
+                    new ConcreteAbilityInput<Card>(_poker.Players[1].Hand.Cards[0])),
+                new ConcreteAbilityInput<ModifyKey>(ModifyKey.IncrementRank, 
+                    new ConcreteAbilityInput<ModifyKey>(ModifyKey.Club)));
+            ActivateAbility(thing1);
+        }
     }
     
     public void ActivateAbility(IAbility ability)

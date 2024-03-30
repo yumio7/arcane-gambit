@@ -7,12 +7,12 @@ public class SwapCardAbility : IAbility
     public IAbility NextAbility { get; set; }
     public string AbilityName { get; set; } = "Swap Card";
 
-    private IAbilityInput<Card> _input;
+    private IAbilityInput<Card> _firstCard;
 
-    public SwapCardAbility(IAbilityInput<Card> input, IAbilityInput<Card> input2)
+    public SwapCardAbility(IAbilityInput<Card> firstCard, IAbilityInput<Card> secondCard)
     {
-        _input = input;
-        _input.LinkSequence(input2);
+        _firstCard = firstCard;
+        _firstCard.LinkSequence(secondCard);
     }
     
     public void Activate(AbilityManager abilityManager)
@@ -22,16 +22,15 @@ public class SwapCardAbility : IAbility
 
     public IEnumerator Process(AbilityManager abilityManager)
     {
-        Card card1 = _input.GetInput();
-        Card card2 = _input.NextInput().GetInput();
+        Card card1 = _firstCard.GetInput();
+        Card card2 = _firstCard.NextInput().GetInput();
         CardCollection hand1 = card1.Owner;
         CardCollection hand2 = card2.Owner;
-        yield return null;
         hand1.Remove(card1);
         hand2.Remove(card2);
         hand1.AddCard(card2);
         hand2.AddCard(card1);
-        yield break;
+        yield return null;
     }
 
     public void Finish(AbilityManager abilityManager)
