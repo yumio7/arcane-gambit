@@ -139,7 +139,13 @@ public class PlayerUIController : MonoBehaviour
 
                     if (!human_player.OutOfBetting)
                     {
-                        int hand_score = HandEvaluator.EvaluateHand(human_player.Hand.Cards);
+                        List<Card> hand_to_check = new List<Card>(human_player.Hand.Cards);
+                        // Check if community card is available or not
+                        if (poker.CommunityCard != null)
+                        {
+                            hand_to_check.Add(poker.CommunityCard);
+                        }
+                        int hand_score = HandEvaluator.EvaluateHand(hand_to_check);
                         hand_strength_slider.value = hand_score;
                     } else
                     {

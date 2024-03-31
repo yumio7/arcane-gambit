@@ -48,7 +48,7 @@ public class PlayerActionVisualizationManager : MonoBehaviour
                             } else if (value == -1)
                             {
                                 message += "folded.";
-                            } else if (value == poker.CurrentMinBid)
+                            } else if (players_in_game[index].CurrentBetAmount == poker.CurrentMinBid)
                             {
                                 message += "matched the bet.";
                             }

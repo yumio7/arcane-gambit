@@ -112,6 +112,12 @@ public class WorldHandComponent : MonoBehaviour
         }
     }
 
+    // Returns the current ammount of cards in the world hand component
+    public int CardsInHand()
+    {
+        return cards_in_hand.Count;
+    }
+
     void Update()
     {
         UpdateCardPositions();

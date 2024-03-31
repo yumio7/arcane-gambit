@@ -10,7 +10,7 @@ public class WorldMessageVisualizerComponent : MonoBehaviour
     public GameObject messages_parent;
     public Text message_text;
     [Header("Visuals")]
-    public float message_display_time = 2f;
+    public float message_display_time = 3f;
 
     // References
     private Camera main_camera;
