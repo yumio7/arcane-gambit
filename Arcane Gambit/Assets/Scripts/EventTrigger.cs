@@ -22,7 +22,7 @@ public class EventTrigger : MonoBehaviour
             method?.Invoke(argument);
         } else
         {
-            Debug.LogError("Event Trigger has no method!");
+            Debug.LogWarning("Event Trigger has no method!");
         }
     }
 }

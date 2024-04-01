@@ -90,6 +90,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4978403814615400909}
   - component: {fileID: 1999447682721839092}
+  - component: {fileID: 7688562990731653092}
   m_Layer: 0
   m_Name: BaseCardPrefab
   m_TagString: Untagged
@@ -134,6 +135,18 @@ MonoBehaviour:
   heart_suit_icon: {fileID: 21300000, guid: d58456f680a2c1e41b55a551ca67b216, type: 3}
   club_suit_icon: {fileID: 21300000, guid: 558c0c2a456863d44926a7e24f83000f, type: 3}
   spade_suit_icon: {fileID: 21300000, guid: fb8d3d478444820478f9ef444930f1ea, type: 3}
+--- !u!114 &7688562990731653092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4290289893195795773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46fdec4ff1b989643a2584916caec71b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4510702750725109626
 GameObject:
   m_ObjectHideFlags: 0
