@@ -68,11 +68,12 @@ public class Opponent : Player
 
     private void calc_mulligan()
     {
-        //TEMP
         if (HandEvaluator.EvaluateHand(Hand.Cards) < 1000000)
         {
             Mulligan(new List<int>{0, 1, 2, 3, 4});
         }
+
+        //TODO: Determine which cards are not contributing to score and mulligan them
 
         Mulligan(new List<int>{});
     }
