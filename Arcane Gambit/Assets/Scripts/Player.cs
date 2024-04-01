@@ -119,21 +119,41 @@ public class Player
         OnPlayerFold?.Invoke(this);
     }
 
-    protected void TakeChipsForBid(int amount)
-    {
-        TotalChips -= amount;
-        CurrentBetAmount += amount;
-        RoundBetAmount += amount;
-    }
-
     public void GiveChips(int amount)
     {
         TotalChips += amount;
     }
+    
+    protected void TakeChipsForBid(int amount)
+    {
+        int finalAmount = TotalChips - amount;
+        if (finalAmount < 0)
+        {
+            Die();
+            TotalChips = 0;
+            return;
+        }
+        TotalChips = finalAmount;
+        CurrentBetAmount += amount;
+        RoundBetAmount += amount;
+    }
 
     public void TakeChips(int amount)
     {
-        TotalChips -= amount;
+        int remainingChips = TotalChips - amount;
+        if (remainingChips < 0)
+        {
+            Die();
+            TotalChips = 0;
+            return;
+        }
+        TotalChips = remainingChips;
+    }
+
+    public void Die()
+    {
+        Alive = false;
+        OutOfBetting = false;
     }
 
     /// <summary>

@@ -36,6 +36,11 @@ public class RoundStartState : GameState
     
     public override void OnEnter(Poker poker)
     {
+        if (poker.VerifyGameOver())
+        {
+            poker.ProceedGameState();
+            return;
+        }
         foreach (Player player in poker.Players)
         {
             player.NewRound();
@@ -64,6 +69,11 @@ public class BettingRoundState : GameState
     
     public override void OnEnter(Poker poker)
     {
+        if (poker.VerifyGameOver())
+        {
+            poker.ProceedGameState();
+            return;
+        }
         poker.StartBettingSequence();
     }
 
@@ -96,6 +106,11 @@ public class MulliganRoundState : GameState
     
     public override void OnEnter(Poker poker)
     {
+        if (poker.VerifyGameOver())
+        {
+            poker.ProceedGameState();
+            return;
+        }
         poker.StartMulliganSequence();
     }
     public override void Execute(Poker poker)
@@ -111,6 +126,11 @@ public class CommunityCardState : GameState
     
     public override void OnEnter(Poker poker)
     {
+        if (poker.VerifyGameOver())
+        {
+            poker.ProceedGameState();
+            return;
+        }
         poker.UpdateCommunityCard();
     }
 
@@ -133,6 +153,10 @@ public class RoundEndState : GameState
             player.EndRound();
             player.HideHand();
         }
+        if (poker.VerifyGameOver())
+        {
+            poker.GameOver();
+        }
     }
 
     public override void Execute(Poker poker)
@@ -150,7 +174,15 @@ public class RoundEndState : GameState
 public class GameOverState : GameState
 {
     public GameOverState(float delay = 1f) : base(delay) { }
+
+    private EventButtonGenerator.EventButtonData _gameOverText;
     
+    public override void OnEnter(Poker poker)
+    {
+        _gameOverText =
+            EventButtonGenerator.Instance.CreateNewEventButton(0, 0, "GameOver!", o => Debug.Log(o), "GameOver!");
+    }
+
     public override void Execute(Poker poker)
     {
         
@@ -448,11 +480,6 @@ public class Poker : MonoBehaviour
         
     }
 
-    /*private void FixedUpdate()
-    {
-        UpdateAIData();
-    }*/
-
     public void PauseProcesses()
     {
         Busy = true;
@@ -539,12 +566,27 @@ public class Poker : MonoBehaviour
         }
         UpdateBlindStatus();
     }
+
+    public void GameOver()
+    {
+        SwitchState(new GameOverState());
+    }
     
     private void SwitchState(GameState gameState)
     {
         PokerState.OnExit(this);
         PokerState = gameState;
         PokerState.OnEnter(this);
+    }
+
+    public bool VerifyGameOver()
+    {
+        return GetAmountOfAlivePlayers() <= 1;
+    }
+
+    public bool IsRoundEndFromFold()
+    {
+        return GetAmountOfFolded() >= 3;
     }
 
     public void DealCardToPlayer(Player player, int amount = 1)
@@ -586,10 +628,7 @@ public class Poker : MonoBehaviour
         
         do
         {
-            if (GetAmountOfAlivePlayers() <= 1)
-            {
-                
-            }
+            
             counter++;
             Debug.Log(counter);
             //Debug.Log("betting");
@@ -616,7 +655,7 @@ public class Poker : MonoBehaviour
             {
                 hasCompletedFullLoop = true;
             }*/
-        } while (!AreAllPlayersMatchingHighestBet() || counter < Players.Count);
+        } while ((!AreAllPlayersMatchingHighestBet() || counter < Players.Count) && !IsRoundEndFromFold());
         
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
         Debug.Log("finish");
@@ -801,6 +840,11 @@ public class Poker : MonoBehaviour
     public int GetAmountOfAlivePlayers()
     {
         return Players.Count(player => player.Alive);
+    }
+
+    public int GetAmountOfFolded()
+    {
+        return Players.Count(player => player.OutOfBetting);
     }
     
 }
