@@ -7,6 +7,11 @@ public abstract class AbstractAbility : IAbility
     public IAbility NextAbility { get; set; }
     public string AbilityName { get; set; }
 
+    public void Setup()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public virtual void Activate()
     {
         throw new System.NotImplementedException();

@@ -281,6 +281,22 @@ public struct PokerData
 
 public class Poker : MonoBehaviour
 {
+    // Singleton instance
+    public static Poker Instance { get; private set; }
+
+    private void Awake()
+    {
+        // Ensure that there is only one instance of Poker
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    
     public GameState PokerState { get; private set; } = new RoundStartState();
     public CyclicList<Player> Players { get; private set; } = new CyclicList<Player>()
     {

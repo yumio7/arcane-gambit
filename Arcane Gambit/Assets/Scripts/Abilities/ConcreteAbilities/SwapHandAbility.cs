@@ -14,7 +14,12 @@ public class SwapHandAbility : IAbility
         _input = input1;
         _input.LinkSequence(input2);
     }
-    
+
+    public void Setup()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void Activate()
     {
         throw new System.NotImplementedException();

@@ -7,8 +7,8 @@ public interface IAbility : IDisposable
 {
     public IAbility NextAbility { get; set; }
     public string AbilityName { get; set; }
-    
-    
+
+    public void Setup();
     public void Activate();
     public IEnumerator Process();
     public void Finish();

@@ -37,17 +37,24 @@ public class ModifyCardAbility : IAbility
         _onInputReceived = () => RequestInput();
 
    
-        _input.OnInputReceived += _onInputReceived;
         
 
         // Remember to unsubscribe this event when it's no longer needed to prevent memory leaks.
     }
     
-    public void Dispose() 
+    public void Dispose()
     {
-        _input.OnInputReceived -= _onInputReceived;
+        Debug.Log("DISPOSE");
+        _input.UnsubscribeFromSequence(_onInputReceived);
+        _modify.UnsubscribeFromSequence(_onInputReceived);
     }
-    
+
+    public void Setup()
+    {
+        _input.SubscribeToSequence(_onInputReceived);
+        _modify.SubscribeToSequence(_onInputReceived);
+    }
+
     public void Activate()
     {
         AbilityManager.Instance.StartCoroutine(this.Process());
@@ -94,10 +101,12 @@ public class ModifyCardAbility : IAbility
     public void Finish()
     {
         Finished = true;
+        NextAbility?.Activate();
     }
 
     public void Cleanup()
     {
+        Dispose();
         _input.Cleanup();
         _modify.Cleanup();
         Finished = false;
@@ -105,6 +114,7 @@ public class ModifyCardAbility : IAbility
 
     public void RequestInput()
     {
+        Debug.Log("request");
         if (_input?.IsInputSequenceReady() == false)
         {
             _input.RequestNextNonReadyInput();
@@ -121,6 +131,10 @@ public class ModifyCardAbility : IAbility
 
     public bool IsFinished()
     {
+        if (NextAbility != null)
+        {
+            return Finished || NextAbility.IsFinished();
+        }
         return Finished;
     }
 }

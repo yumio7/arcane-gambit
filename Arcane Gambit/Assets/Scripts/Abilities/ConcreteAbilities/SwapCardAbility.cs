@@ -14,7 +14,12 @@ public class SwapCardAbility : IAbility
         _firstCard = firstCard;
         _firstCard.LinkSequence(secondCard);
     }
-    
+
+    public void Setup()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void Activate()
     {
         AbilityManager.Instance.StartCoroutine(this.Process());

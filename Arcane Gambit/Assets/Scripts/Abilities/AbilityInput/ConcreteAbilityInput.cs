@@ -15,6 +15,9 @@ public interface IAbilityInput<T> : IEnumerable<T>
     public IAbilityInput<T> NextInput();
     public void Cleanup();
     List<T> ToList();
+
+    public void SubscribeToSequence(Action action);
+    public void UnsubscribeFromSequence(Action action);
 }
 
 public abstract class AbstractAbilityInput<T> : IAbilityInput<T>
@@ -105,6 +108,19 @@ public abstract class AbstractAbilityInput<T> : IAbilityInput<T>
     public List<T> ToList()
     {
         return new List<T>() { Input }.Concat(SequencedInput.ToList()).ToList();
+    }
+
+    public void SubscribeToSequence(Action action)
+    {
+        Debug.Log("subscribe");
+        OnInputReceived += action;
+        SequencedInput?.SubscribeToSequence(action);
+    }
+
+    public void UnsubscribeFromSequence(Action action)
+    {
+        OnInputReceived -= action;
+        SequencedInput?.UnsubscribeFromSequence(action);
     }
 
     public IEnumerator<T> GetEnumerator()
