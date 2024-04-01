@@ -52,7 +52,7 @@ public class Opponent : Player
             Raise();
         }
         // if the raw is close to 0.0 fold
-        else if (raw_score < 0.25 && _pokerData.PokerState is not BlindBettingRoundState)
+        else if (raw_score < 0.10 && _pokerData.PokerState is not BlindBettingRoundState)
         {
             Fold();
         }
@@ -69,7 +69,12 @@ public class Opponent : Player
     private void calc_mulligan()
     {
         //TEMP
-        RespondToMulligan(0);
+        if (HandEvaluator.EvaluateHand(Hand.Cards) < 1000000)
+        {
+            Mulligan(new List<int>{0, 1, 2, 3, 4});
+        }
+
+        Mulligan(new List<int>{});
     }
 
     static public float normalize_score(int hand_score)
