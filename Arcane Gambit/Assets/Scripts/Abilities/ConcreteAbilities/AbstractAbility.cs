@@ -2,32 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwapHandAbility : IAbility
+public abstract class AbstractAbility : IAbility
 {
     public IAbility NextAbility { get; set; }
-    public string AbilityName { get; set; } = "Swap Hands";
-    
-    private IAbilityInput<Hand> _input;
-    
-    public SwapHandAbility(IAbilityInput<Hand> input1, IAbilityInput<Hand> input2)
-    {
-        _input = input1;
-        _input.LinkSequence(input2);
-    }
-    
-    public void Activate()
+    public string AbilityName { get; set; }
+
+    public virtual void Activate()
     {
         throw new System.NotImplementedException();
     }
 
     public IEnumerator Process()
     {
-        throw new System.NotImplementedException();
+        yield break;
     }
 
-    public void Finish()
+    public virtual void Finish()
     {
-        throw new System.NotImplementedException();
+        NextAbility?.Activate();
     }
 
     public void Cleanup()
@@ -35,7 +27,7 @@ public class SwapHandAbility : IAbility
         throw new System.NotImplementedException();
     }
 
-    public void RequestInput()
+    public virtual void RequestInput()
     {
         throw new System.NotImplementedException();
     }

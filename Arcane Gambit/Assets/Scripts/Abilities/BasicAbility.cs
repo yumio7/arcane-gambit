@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BasicAbility : AbstractAbility
 {
-    public override void Activate(AbilityManager abilityManager)
+    public override void Activate()
     {
         throw new System.NotImplementedException();
     }

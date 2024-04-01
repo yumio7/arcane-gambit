@@ -66,6 +66,7 @@ public class EventButtonGenerator : MonoBehaviour
     // Overloaded version that also instantly sets up button with given method and argument
     public EventButtonData CreateNewEventButton(int xPos, int yPos, string text, Action<object> method, object argument)
     {
+        Debug.Log("TEST");
         EventButtonData new_data = CreateNewEventButton(xPos, yPos, text);
         new_data.trigger_reference.SetEventTriggerParameters(method, argument);
         return new_data;

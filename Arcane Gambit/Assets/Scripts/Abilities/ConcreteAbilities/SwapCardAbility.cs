@@ -15,12 +15,12 @@ public class SwapCardAbility : IAbility
         _firstCard.LinkSequence(secondCard);
     }
     
-    public void Activate(AbilityManager abilityManager)
+    public void Activate()
     {
-        abilityManager.StartCoroutine(this.Process(abilityManager));
+        AbilityManager.Instance.StartCoroutine(this.Process());
     }
 
-    public IEnumerator Process(AbilityManager abilityManager)
+    public IEnumerator Process()
     {
         Card card1 = _firstCard.GetInput();
         Card card2 = _firstCard.NextInput().GetInput();
@@ -33,12 +33,32 @@ public class SwapCardAbility : IAbility
         yield return null;
     }
 
-    public void Finish(AbilityManager abilityManager)
+    public void Finish()
     {
         Debug.Log("done!");
     }
 
+    public void Cleanup()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void RequestInput()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public bool IsReady()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public bool IsFinished()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Dispose()
     {
         throw new System.NotImplementedException();
     }

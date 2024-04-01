@@ -20,20 +20,40 @@ public class ModifyCardAbility : IAbility
     
     private IAbilityInput<Card> _input;
     private IAbilityInput<ModifyKey> _modify;
-    
+    private readonly Action _onInputReceived;
+    public bool Finished { get; private set; } = false;
+
     public ModifyCardAbility(IAbilityInput<Card> cardToModify, IAbilityInput<ModifyKey> modification)
     {
+        // Check if the inputs are null
+        if (cardToModify == null || modification == null)
+        {
+            throw new ArgumentNullException(nameof(cardToModify), "The provided arguments must not be null.");
+        }
+
         _input = cardToModify;
         _modify = modification;
-        //_input.LinkSequence(input2);
+
+        _onInputReceived = () => RequestInput();
+
+   
+        _input.OnInputReceived += _onInputReceived;
+        
+
+        // Remember to unsubscribe this event when it's no longer needed to prevent memory leaks.
     }
     
-    public void Activate(AbilityManager abilityManager)
+    public void Dispose() 
     {
-        abilityManager.StartCoroutine(this.Process(abilityManager));
+        _input.OnInputReceived -= _onInputReceived;
+    }
+    
+    public void Activate()
+    {
+        AbilityManager.Instance.StartCoroutine(this.Process());
     }
 
-    public IEnumerator Process(AbilityManager abilityManager)
+    public IEnumerator Process()
     {
         foreach (Card card in _input)
         {
@@ -46,8 +66,8 @@ public class ModifyCardAbility : IAbility
             }
             cardOwner.AddCard(returnCard);
         }
-
         yield return null;
+        Finish();
     }
 
     private Card ModifyCard(Card card, ModifyKey modifyKey)
@@ -71,13 +91,36 @@ public class ModifyCardAbility : IAbility
         } 
     }
 
-    public void Finish(AbilityManager abilityManager)
+    public void Finish()
     {
-        throw new System.NotImplementedException();
+        Finished = true;
+    }
+
+    public void Cleanup()
+    {
+        _input.Cleanup();
+        _modify.Cleanup();
+        Finished = false;
     }
 
     public void RequestInput()
     {
-        throw new System.NotImplementedException();
+        if (_input?.IsInputSequenceReady() == false)
+        {
+            _input.RequestNextNonReadyInput();
+        } else if (_modify?.IsInputSequenceReady() == false)
+        {
+            _modify.RequestNextNonReadyInput();
+        }
+    }
+
+    public bool IsReady()
+    {
+        return _input.IsInputSequenceReady() && _modify.IsInputSequenceReady();
+    }
+
+    public bool IsFinished()
+    {
+        return Finished;
     }
 }

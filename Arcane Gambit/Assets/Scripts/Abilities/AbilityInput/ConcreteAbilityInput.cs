@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 public interface IAbilityInput<T> : IEnumerable<T>
 {
+    public event Action OnInputReceived;
     void LinkSequence(IAbilityInput<T> sequencedInput);
     T GetInput();
     void SetInput(T input);
@@ -12,12 +13,13 @@ public interface IAbilityInput<T> : IEnumerable<T>
     void RequestNextNonReadyInput();
     bool IsInputSequenceReady();
     public IAbilityInput<T> NextInput();
+    public void Cleanup();
     List<T> ToList();
 }
 
 public abstract class AbstractAbilityInput<T> : IAbilityInput<T>
 {
-    public event Action<T> OnInputReceived = delegate { };
+    public event Action OnInputReceived = delegate {};
     public IAbilityInput<T> SequencedInput { get; protected set; }
     protected T Input = default;
     protected IAbilityInputRequest<T> InputRequest = null;
@@ -38,6 +40,7 @@ public abstract class AbstractAbilityInput<T> : IAbilityInput<T>
         InputRequest = inputRequest;
     }
 
+
     public void LinkSequence(IAbilityInput<T> sequencedInput)
     {
         SequencedInput = sequencedInput;
@@ -52,10 +55,10 @@ public abstract class AbstractAbilityInput<T> : IAbilityInput<T>
     {
         Input = input;
         InputReady = true;
-        OnInputReceived(Input);
+        RequestNextNonReadyInput();
     }
 
-    public void RequestInput()
+    public virtual void RequestInput()
     {
         if(InputRequest != null) 
         {
@@ -67,15 +70,18 @@ public abstract class AbstractAbilityInput<T> : IAbilityInput<T>
         }
     }
 
-    public void RequestNextNonReadyInput()
+    public virtual void RequestNextNonReadyInput()
     {
-        if (InputReady)
+        if (InputReady == false)
         {
             RequestInput();
         }
-        else
+        else if(SequencedInput != null)
         {
             SequencedInput.RequestNextNonReadyInput();
+        } else
+        {
+            OnInputReceived?.Invoke();
         }
     }
 
@@ -87,6 +93,13 @@ public abstract class AbstractAbilityInput<T> : IAbilityInput<T>
     public IAbilityInput<T> NextInput()
     {
         return SequencedInput;
+    }
+
+    public void Cleanup()
+    {
+        InputRequest?.Cleanup();
+        SequencedInput?.Cleanup();
+        InputReady = false;
     }
 
     public List<T> ToList()
@@ -118,6 +131,30 @@ public class ConcreteAbilityInput<T> : AbstractAbilityInput<T>
     {
         
     }
+
+    /*public override void RequestInput()
+    {
+        if (InputRequest != null)
+        {
+            InputRequest.Request(SetInput);
+        }
+        else
+        {
+            SetInput(Input);
+        }
+    }
+
+    public override void RequestNextNonReadyInput()
+    {
+        if (InputReady == false)
+        {
+            RequestInput();
+        }
+        else
+        {
+            SequencedInput?.RequestNextNonReadyInput();
+        }
+    }*/
 }
 
 public class AbilityInput<T> : AbstractAbilityInput<T>

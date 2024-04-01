@@ -19,7 +19,7 @@ public class EventTrigger : MonoBehaviour
     {
         if (method != null)
         {
-            method(argument);
+            method?.Invoke(argument);
         } else
         {
             Debug.LogError("Event Trigger has no method!");
