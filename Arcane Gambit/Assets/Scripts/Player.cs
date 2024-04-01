@@ -179,6 +179,19 @@ public class Player
         
     }
 
+    public virtual void MulliganCards(List<Card> cardsToRemove = null)
+    {
+        if (cardsToRemove == null)
+        {
+            RespondToMulligan(0);
+        }
+        else
+        {
+            DiscardedCards.AddCard(Hand.DiscardCard(cardsToRemove));
+            RespondToMulligan(cardsToRemove.Count);
+        }
+    }
+
     /// <summary>
     /// Responds to a mulligan request from the game manager by invoking the OnPlayerResponse event with the PlayerRequestType.Mulligan and the specified mulliganValue.
     /// </summary>

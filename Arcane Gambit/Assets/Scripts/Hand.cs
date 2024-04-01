@@ -58,6 +58,17 @@ public class Hand : CardCollection
         }
     }
     
+    public Card DiscardCard(Card card)
+    {
+        if (!Cards.Remove(card))
+        {
+            Debug.Log($"{card} is not in hand");
+        }
+        card.Owner = null;
+        OnHandUpdated?.Invoke(this);
+        return card;
+    }
+    
     public List<Card> DiscardCard(List<int> indices)
     {
         indices.Sort();
@@ -76,6 +87,19 @@ public class Hand : CardCollection
                 throw new IndexOutOfRangeException();
             }
         }
+        OnHandUpdated?.Invoke(this);
+        return discardedCards;
+    }
+    
+    public List<Card> DiscardCard(List<Card> cardsToRemove)
+    {
+        List<Card> discardedCards = new List<Card>();
+
+        foreach (Card card in cardsToRemove)
+        {
+            discardedCards.Add(DiscardCard(card));
+        }
+        
         OnHandUpdated?.Invoke(this);
         return discardedCards;
     }
