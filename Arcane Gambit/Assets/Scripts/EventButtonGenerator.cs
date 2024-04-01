@@ -21,6 +21,7 @@ public class EventButtonGenerator : MonoBehaviour
 
     [Header("UI references")]
     public Canvas main_canavs;
+    public GameObject layout_parent;
 
     // Prefab for button to be created
     private GameObject button_prefab;
@@ -70,5 +71,14 @@ public class EventButtonGenerator : MonoBehaviour
         EventButtonData new_data = CreateNewEventButton(xPos, yPos, text);
         new_data.trigger_reference.SetEventTriggerParameters(method, argument);
         return new_data;
+    }
+
+    // Places button in specific screen layout for ease
+    public void PlaceButtonInLayout(EventButtonData button)
+    {
+        if (button.gameobject_reference != null && layout_parent != null)
+        {
+            button.gameobject_reference.transform.SetParent(layout_parent.transform);
+        }
     }
 }

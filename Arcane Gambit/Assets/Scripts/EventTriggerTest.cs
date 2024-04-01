@@ -7,8 +7,11 @@ public class EventTriggerTest : MonoBehaviour
     void Start()
     {
         EventButtonGenerator.EventButtonData data1 = EventButtonGenerator.Instance.CreateNewEventButton(0, 0, "button 1");
+        EventButtonGenerator.Instance.PlaceButtonInLayout(data1);
         EventButtonGenerator.EventButtonData data2 = EventButtonGenerator.Instance.CreateNewEventButton(-200, 200, "button 2");
+        EventButtonGenerator.Instance.PlaceButtonInLayout(data2);
         EventButtonGenerator.EventButtonData data3 = EventButtonGenerator.Instance.CreateNewEventButton(200, -200, "button 3");
+        EventButtonGenerator.Instance.PlaceButtonInLayout(data3);
 
         data1.trigger_reference.SetEventTriggerParameters(Method1, 5);
         data2.trigger_reference.SetEventTriggerParameters(Method1, 10);
