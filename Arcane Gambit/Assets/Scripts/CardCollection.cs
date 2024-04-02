@@ -48,6 +48,7 @@ public class CardCollection
 
     public void AddCard(Card card)
     {
+        if(card == null) {return;}
         card.Owner = this;
         Cards.Add(card);
     }

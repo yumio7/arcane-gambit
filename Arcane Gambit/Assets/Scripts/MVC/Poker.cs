@@ -36,11 +36,6 @@ public class RoundStartState : GameState
     
     public override void OnEnter(Poker poker)
     {
-        if (poker.VerifyGameOver())
-        {
-            poker.ProceedGameState();
-            return;
-        }
         foreach (Player player in poker.Players)
         {
             player.NewRound();
@@ -69,11 +64,6 @@ public class BettingRoundState : GameState
     
     public override void OnEnter(Poker poker)
     {
-        if (poker.VerifyGameOver())
-        {
-            poker.ProceedGameState();
-            return;
-        }
         poker.StartBettingSequence();
     }
 
@@ -106,11 +96,6 @@ public class MulliganRoundState : GameState
     
     public override void OnEnter(Poker poker)
     {
-        if (poker.VerifyGameOver())
-        {
-            poker.ProceedGameState();
-            return;
-        }
         poker.StartMulliganSequence();
     }
     public override void Execute(Poker poker)
@@ -126,11 +111,6 @@ public class CommunityCardState : GameState
     
     public override void OnEnter(Poker poker)
     {
-        if (poker.VerifyGameOver())
-        {
-            poker.ProceedGameState();
-            return;
-        }
         poker.UpdateCommunityCard();
     }
 
@@ -660,6 +640,11 @@ public class Poker : MonoBehaviour
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
         Debug.Log("finish");
         UnpauseProcesses(1f);
+        if (IsRoundEndFromFold())
+        {
+            _gameLoopDefinition.SetCurrentIndex(_gameLoopDefinition.Count - 2);
+            SwitchState(_gameLoopDefinition[_gameLoopDefinition.Count - 2]);
+        }
     }
     
     public void StartMulliganSequence()
