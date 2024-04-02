@@ -22,13 +22,15 @@ public class WorldHandComponent : MonoBehaviour
     {
         public Card card;
         public GameObject prefab;
+        public EventTriggerClickable clickable;
         public Vector3 target_position;
 
-        public WorldHandCardObject(Card card, GameObject prefab, Vector3 target_position)
+        public WorldHandCardObject(Card card, GameObject prefab, Vector3 target_position, EventTriggerClickable clickable)
         {
             this.card = card;
             this.prefab = prefab;
             this.target_position = target_position;
+            this.clickable = clickable;
         }
     }
 
@@ -51,7 +53,10 @@ public class WorldHandComponent : MonoBehaviour
             CardVisualizer cardVisualizer = newCardPrefab.GetComponent<CardVisualizer>();
             cardVisualizer.SetCard(card);
             // Add it to our hand using its card as a key
-            WorldHandCardObject card_object = new WorldHandCardObject(card, newCardPrefab, card_anchor.transform.position);
+            WorldHandCardObject card_object = new WorldHandCardObject(card, 
+                newCardPrefab, 
+                card_anchor.transform.position,
+                newCardPrefab.GetComponent<EventTriggerClickable>());
             cards_in_hand.Add(card_object);
             // Recalculate card world positions
             CalculateCardPositions();
@@ -92,6 +97,10 @@ public class WorldHandComponent : MonoBehaviour
             for (int i = 0; i < cards_in_hand.Count; i++)
             {
                 cards_in_hand[i].target_position = start_offset_pos + ((i * (card_width + card_spacing)) * (card_anchor.right));
+                if (cards_in_hand[i].clickable.IsMouseOver())
+                {
+                    cards_in_hand[i].target_position += card_anchor.up * card_spacing;
+                }
             }
         }
     }
@@ -120,6 +129,7 @@ public class WorldHandComponent : MonoBehaviour
 
     void Update()
     {
+        CalculateCardPositions();
         UpdateCardPositions();
 
         /*if(Input.GetKeyDown(KeyCode.Space))
