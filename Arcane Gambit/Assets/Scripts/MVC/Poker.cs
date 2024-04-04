@@ -36,6 +36,7 @@ public class RoundStartState : GameState
     
     public override void OnEnter(Poker poker)
     {
+        if (poker.VerifyWinOrLose()) { return; }
         foreach (Player player in poker.Players)
         {
             player.NewRound();
@@ -45,6 +46,7 @@ public class RoundStartState : GameState
         poker.Deck.Shuffle();
         foreach (Player player in poker.Players)
         {
+            if (!player.Alive) { continue; }
             poker.DealCardToPlayer(player, 5);
         }
         //when animations and timed processes are added, unpausing and pausing will be handled in poker class
@@ -64,6 +66,7 @@ public class BettingRoundState : GameState
     
     public override void OnEnter(Poker poker)
     {
+        if (poker.VerifyWinOrLose()) { return; }
         poker.StartBettingSequence();
     }
 
@@ -80,6 +83,7 @@ public class BlindBettingRoundState : GameState
     
     public override void OnEnter(Poker poker)
     {
+        if (poker.VerifyWinOrLose()) { return; }
         poker.StartBettingSequence(true);
     }
 
@@ -96,6 +100,7 @@ public class MulliganRoundState : GameState
     
     public override void OnEnter(Poker poker)
     {
+        if (poker.VerifyWinOrLose()) { return; }
         poker.StartMulliganSequence();
     }
     public override void Execute(Poker poker)
@@ -111,6 +116,7 @@ public class CommunityCardState : GameState
     
     public override void OnEnter(Poker poker)
     {
+        if (poker.VerifyWinOrLose()) { return; }
         poker.UpdateCommunityCard();
     }
 
@@ -133,10 +139,8 @@ public class RoundEndState : GameState
             player.EndRound();
             player.HideHand();
         }
-        if (poker.VerifyGameOver())
-        {
-            poker.GameOver();
-        }
+
+        poker.VerifyWinOrLose();
     }
 
     public override void Execute(Poker poker)
@@ -151,16 +155,34 @@ public class RoundEndState : GameState
     }
 }
 
-public class GameOverState : GameState
+public class GameWinState : GameState
 {
-    public GameOverState(float delay = 1f) : base(delay) { }
+    public GameWinState(float delay = 1f) : base(delay) { }
 
     private EventButtonGenerator.EventButtonData _gameOverText;
     
     public override void OnEnter(Poker poker)
     {
         _gameOverText =
-            EventButtonGenerator.Instance.CreateNewEventButton(0, 0, "GameOver!", o => Debug.Log(o), "GameOver!");
+            EventButtonGenerator.Instance.CreateNewEventButton(0, 0, "You Win!", o => Debug.Log(o), "You Win!");
+    }
+
+    public override void Execute(Poker poker)
+    {
+        
+    }
+}
+
+public class GameLoseState : GameState
+{
+    public GameLoseState(float delay = 1f) : base(delay) { }
+
+    private EventButtonGenerator.EventButtonData _gameOverText;
+    
+    public override void OnEnter(Poker poker)
+    {
+        _gameOverText =
+            EventButtonGenerator.Instance.CreateNewEventButton(0, 0, "Game Over!\nThe Wizards took your soul...", o => Debug.Log(o), "Game Over!\nThe Wizards took your soul...");
     }
 
     public override void Execute(Poker poker)
@@ -547,10 +569,7 @@ public class Poker : MonoBehaviour
         UpdateBlindStatus();
     }
 
-    public void GameOver()
-    {
-        SwitchState(new GameOverState());
-    }
+    
     
     private void SwitchState(GameState gameState)
     {
@@ -559,9 +578,29 @@ public class Poker : MonoBehaviour
         PokerState.OnEnter(this);
     }
 
-    public bool VerifyGameOver()
+    public bool VerifyWinOrLose()
     {
-        return GetAmountOfAlivePlayers() <= 1;
+        if (!Players[0].Alive)
+        {
+            Lose();
+            return true;
+        }
+        if (GetAmountOfAlivePlayers() <= 1)
+        {
+            Win();
+            return true;
+        }
+        return false;
+    }
+    
+    public void Win()
+    {
+        SwitchState(new GameWinState());
+    }
+
+    public void Lose()
+    {
+        SwitchState(new GameLoseState());
     }
 
     public bool IsRoundEndFromFold()
@@ -589,8 +628,7 @@ public class Poker : MonoBehaviour
     public IEnumerator BettingSequenceCoroutine(bool forceBlind)
     {
         PauseProcesses();
-
-        //bool hasCompletedFullLoop = false;
+        
         int counter = 0;
         yield return null;
         CurrentMinBid = 0;
@@ -631,10 +669,6 @@ public class Poker : MonoBehaviour
             }
 
             Players.Next();
-            /*if (Players.Current == BlindPlayer)
-            {
-                hasCompletedFullLoop = true;
-            }*/
         } while ((!AreAllPlayersMatchingHighestBet() || counter < Players.Count) && !IsRoundEndFromFold());
         
         Players.SetCurrentIndex(BlindPlayer.IndexInManager);
@@ -642,8 +676,8 @@ public class Poker : MonoBehaviour
         UnpauseProcesses(1f);
         if (IsRoundEndFromFold())
         {
-            _gameLoopDefinition.SetCurrentIndex(_gameLoopDefinition.Count - 2);
-            SwitchState(_gameLoopDefinition[_gameLoopDefinition.Count - 2]);
+            _gameLoopDefinition.SetCurrentIndex(_gameLoopDefinition.Count - 1);
+            SwitchState(_gameLoopDefinition[_gameLoopDefinition.Count - 1]);
         }
     }
     
@@ -675,7 +709,6 @@ public class Poker : MonoBehaviour
             SendInputRequest(CurrentPlayer, PlayerRequestType.Mulligan);
             while (_isWaitingForInput)
             {
-                //Debug.Log("waiting");
                 yield return null;
             }
 
