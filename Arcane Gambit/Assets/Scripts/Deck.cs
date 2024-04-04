@@ -33,10 +33,10 @@ public class Deck : CardCollection
 
     public void Shuffle()
     {
-        for (int i = 0; i < Cards.Count; i++) 
+        for (int i = Cards.Count - 1; i > 0; i--)
         {
+            int randomIndex = Random.Range(0, i + 1);
             Card temp = Cards[i];
-            int randomIndex = Random.Range(i, Cards.Count);
             Cards[i] = Cards[randomIndex];
             Cards[randomIndex] = temp;
         }

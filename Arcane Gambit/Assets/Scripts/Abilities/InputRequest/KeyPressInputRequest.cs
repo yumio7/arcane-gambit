@@ -51,17 +51,16 @@ public class ButtonInputRequest<T> : IAbilityInputRequest<T>
     public void Request(Action<T> setMethod)
     {
         
-        int temp = 0;
+        
         foreach (T item in _items)
         {
             var itemObject = item;
             Action<object> setMethodObject = _ => setMethod(itemObject);
             EventButtonGenerator.EventButtonData buttonData =
-                EventButtonGenerator.Instance.CreateNewEventButton(0, temp, item.ToString(), setMethodObject, item);
+                EventButtonGenerator.Instance.CreateNewEventButton(0, 0, item.ToString(), setMethodObject, item);
             Debug.Log(buttonData);
             _buttonDatas.Add(buttonData);
-            Debug.Log("test");
-            temp += 120;
+            EventButtonGenerator.Instance.PlaceButtonInLayout(buttonData);
         }
     }
 

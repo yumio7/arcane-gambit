@@ -64,7 +64,15 @@ public class AbilityManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Slash))
         {
             IAbility thing3 = new ModifyCardAbility(new ConcreteAbilityInput<Card>(Poker.Instance.Players[0].Hand.Cards[0], new ConcreteAbilityInput<Card>(Poker.Instance.Players[1].Hand.Cards[0])), 
-                new AbilityInput<ModifyKey>(ModifyKey.IncrementRank, new ButtonInputRequest<ModifyKey>(new List<ModifyKey>() {ModifyKey.IncrementRank, ModifyKey.DecrementRank})));
+                new AbilityInput<ModifyKey>(ModifyKey.IncrementRank, 
+                    new ButtonInputRequest<ModifyKey>(new List<ModifyKey>() 
+                        {ModifyKey.IncrementRank, 
+                            ModifyKey.DecrementRank,
+                            ModifyKey.Club,
+                            ModifyKey.Diamond,
+                            ModifyKey.Heart,
+                            ModifyKey.Spade
+                        })));
 
             ActivateAbility(thing3);
         }
