@@ -143,34 +143,19 @@ public abstract class AbstractAbilityInput<T> : IAbilityInput<T>
 
 public class ConcreteAbilityInput<T> : AbstractAbilityInput<T>
 {
-    public ConcreteAbilityInput(T input, IAbilityInput<T> sequencedInput = null) : base(input, sequencedInput)
+    private Func<T> _inputMethod;
+    public ConcreteAbilityInput(T input, Func<T> inputMethod, IAbilityInput<T> sequencedInput = null) : base(input, sequencedInput)
     {
-        
+        if (inputMethod == null)
+        { throw new ArgumentException("inputMethod cannot be null"); }
+        _inputMethod = inputMethod;
     }
 
-    /*public override void RequestInput()
+    public override void RequestInput()
     {
-        if (InputRequest != null)
-        {
-            InputRequest.Request(SetInput);
-        }
-        else
-        {
-            SetInput(Input);
-        }
+        Input = _inputMethod.Invoke();
+        base.RequestInput();
     }
-
-    public override void RequestNextNonReadyInput()
-    {
-        if (InputReady == false)
-        {
-            RequestInput();
-        }
-        else
-        {
-            SequencedInput?.RequestNextNonReadyInput();
-        }
-    }*/
 }
 
 public class AbilityInput<T> : AbstractAbilityInput<T>

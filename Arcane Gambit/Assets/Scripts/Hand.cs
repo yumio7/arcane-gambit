@@ -118,6 +118,15 @@ public class Hand : CardCollection
         }
     }
 
+    public Card GetCard(int i)
+    {
+        if (i >= Cards.Count)
+        {
+            throw new IndexOutOfRangeException();
+        }
+        return Cards[i];
+    }
+
     public void UpdateVisual()
     {
         OnHandUpdated?.Invoke(this);

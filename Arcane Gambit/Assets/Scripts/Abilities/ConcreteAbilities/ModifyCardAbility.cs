@@ -35,12 +35,21 @@ public class ModifyCardAbility : IAbility
         _modify = modification;
 
         _onInputReceived = () => RequestInput();
-
-   
-        
-
-        // Remember to unsubscribe this event when it's no longer needed to prevent memory leaks.
     }
+
+    /*public ModifyCardAbility(IAbilityInput<Card> cardToModify, IAbilityInput<ModifyKey> modification)
+    {
+        // Check if the inputs are null
+        if (cardToModify == null || modification == null)
+        {
+            throw new ArgumentNullException(nameof(cardToModify), "The provided arguments must not be null.");
+        }
+
+        _input = cardToModify;
+        _modify = modification;
+
+        _onInputReceived = () => RequestInput();
+    }*/
     
     public void Dispose()
     {
@@ -66,6 +75,7 @@ public class ModifyCardAbility : IAbility
         {
             CardCollection cardOwner = card.Owner;
             Card returnCard = card;
+            Debug.Log(cardOwner);
             cardOwner.Remove(card);
             foreach (ModifyKey modify in _modify)
             {

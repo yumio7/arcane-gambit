@@ -7,6 +7,11 @@ public class AbilityManager : MonoBehaviour
 {
     private AbilityFactory _abilityFactory = new AbilityFactory();
 
+    public Dictionary<string, IAbility> AbilityDirectory { get; private set; } = new Dictionary<string, IAbility>();
+
+    private List<EventButtonGenerator.EventButtonData> _abilityDisplay =
+        new List<EventButtonGenerator.EventButtonData>();
+    
     private Coroutine _abilityControlLoopCoroutine;
     // Making it a Singleton.
     private static AbilityManager _instance;
@@ -29,56 +34,71 @@ public class AbilityManager : MonoBehaviour
             return _instance;
         } 
     }
-
-    // Start is called before the first frame update
-    void Start()
+    
+    private void Start()
     {
-        //IAbility fartAbility = _abilityFactory.CreateNewAbility().AddInput().AddInput().Fart().Build();
-        //fartAbility.Activate();
+        InitializeAbilityDirectory();
+        HideAbilityDirectory();
     }
 
     // Update is called once per frame
     void Update()
     {
         #region TEMP_INPUT
-
-        if (Input.GetKeyDown(KeyCode.Comma))
-        {
-            //IAbility thing = new SwapCardAbility(_poker.Players[0].Hand.Cards[0], _poker.Players[1].Hand.Cards[0]);
-            //thing.Activate(this);
-            //IAbility thing = new SwapCardAbility(new ConcreteAbilityInput<Card>(_poker.Players[0].Hand.Cards[0]), new AbilityInput<Card>());
-            IAbility thing2 = new SwapCardAbility(new ConcreteAbilityInput<Card>(Poker.Instance.Players[0].Hand.Cards[0]), new ConcreteAbilityInput<Card>(Poker.Instance.Players[1].Hand.Cards[0]));
-            ActivateAbility(thing2);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Period))
-        {
-            IAbility thing1 = new ModifyCardAbility(
-                new ConcreteAbilityInput<Card>(Poker.Instance.Players[0].Hand.Cards[0],
-                    new ConcreteAbilityInput<Card>(Poker.Instance.Players[1].Hand.Cards[0])),
-                new ConcreteAbilityInput<ModifyKey>(ModifyKey.IncrementRank, 
-                    new ConcreteAbilityInput<ModifyKey>(ModifyKey.Club)));
-            ActivateAbility(thing1);
-        }
         
         if (Input.GetKeyDown(KeyCode.Slash))
         {
-            IAbility thing3 = new ModifyCardAbility(new ConcreteAbilityInput<Card>(Poker.Instance.Players[0].Hand.Cards[0], new ConcreteAbilityInput<Card>(Poker.Instance.Players[1].Hand.Cards[0])), 
-                new AbilityInput<ModifyKey>(ModifyKey.IncrementRank, 
-                    new ButtonInputRequest<ModifyKey>(new List<ModifyKey>() 
-                        {ModifyKey.IncrementRank, 
-                            ModifyKey.DecrementRank,
-                            ModifyKey.Club,
-                            ModifyKey.Diamond,
-                            ModifyKey.Heart,
-                            ModifyKey.Spade
-                        })));
-
-            ActivateAbility(thing3);
+            DisplayAbilityDirectory();
         }
 
         #endregion
         
+    }
+
+    private void InitializeAbilityDirectory()
+    {
+        AbilityDirectory.Add("Modify Single Card", 
+            new ModifyCardAbility(new ConcreteAbilityInput<Card>(null,() => Poker.Instance.Players[0].Hand.GetCard(0)), 
+                new AbilityInput<ModifyKey>(ModifyKey.IncrementRank, 
+                    new ButtonInputRequest<ModifyKey>(new List<ModifyKey>() 
+                    {ModifyKey.IncrementRank, 
+                        ModifyKey.DecrementRank,
+                        ModifyKey.Club,
+                        ModifyKey.Diamond,
+                        ModifyKey.Heart,
+                        ModifyKey.Spade
+                    }))));
+        /*AbilityDirectory.Add("Swap Two Cards",
+            new SwapCardAbility(new ConcreteAbilityInput<Card>(Poker.Instance.Players[0].Hand.Cards[0]), 
+                new ConcreteAbilityInput<Card>(Poker.Instance.Players[1].Hand.Cards[0])));
+        AbilityDirectory.Add("Swap Hands",
+            new SwapHandAbility(new ConcreteAbilityInput<Hand>(Poker.Instance.Players[0].Hand), 
+                new ConcreteAbilityInput<Hand>(Poker.Instance.Players[1].Hand)));*/
+        
+        
+        EventButtonGenerator EBG = EventButtonGenerator.Instance;
+        foreach (KeyValuePair<string,IAbility> ability in AbilityDirectory)
+        {
+            EventButtonGenerator.EventButtonData data = EBG.CreateNewEventButton(0, 0, ability.Key, o => ActivateAbility(ability.Value), null);
+            EBG.PlaceButtonInLayout(data);
+            _abilityDisplay.Add(data);
+        }
+    }
+
+    private void DisplayAbilityDirectory()
+    {
+        foreach (EventButtonGenerator.EventButtonData buttonData in _abilityDisplay)
+        {
+            buttonData.gameobject_reference.SetActive(true);
+        }
+    }
+
+    private void HideAbilityDirectory()
+    {
+        foreach (EventButtonGenerator.EventButtonData buttonData in _abilityDisplay)
+        {
+            buttonData.gameobject_reference.SetActive(false);
+        }
     }
 
     private int counter = 0;
@@ -86,6 +106,7 @@ public class AbilityManager : MonoBehaviour
     {
         Debug.Log($"Debug: {counter++}");
         _abilityControlLoopCoroutine = StartCoroutine(AbilityControlLoopCoroutine(ability));
+        HideAbilityDirectory();
     }
 
     private IEnumerator AbilityControlLoopCoroutine(IAbility ability)
@@ -115,10 +136,5 @@ public class AbilityManager : MonoBehaviour
         Debug.Log($"Debug: {counter++}");
 
         Debug.Log("Finished ability");
-    }
-
-    private void OnDisable()
-    {
-        
     }
 }
