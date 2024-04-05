@@ -68,6 +68,13 @@ public class AbilityManager : MonoBehaviour
                         ModifyKey.Heart,
                         ModifyKey.Spade
                     }))));
+        AbilityDirectory.Add("The Magician", 
+            new ModifyCardAbility(new ConcreteAbilityInput<Card>(null,() => Poker.Instance.Players[0].Hand.GetCard(0)), 
+                new AbilityInput<ModifyKey>(ModifyKey.IncrementRank, 
+                    new ButtonInputRequest<ModifyKey>(new List<ModifyKey>() 
+                    {ModifyKey.IncrementRank, 
+                        ModifyKey.DecrementRank
+                    }))));
         /*AbilityDirectory.Add("Swap Two Cards",
             new SwapCardAbility(new ConcreteAbilityInput<Card>(Poker.Instance.Players[0].Hand.Cards[0]), 
                 new ConcreteAbilityInput<Card>(Poker.Instance.Players[1].Hand.Cards[0])));
