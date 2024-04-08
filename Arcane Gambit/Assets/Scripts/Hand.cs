@@ -128,7 +128,7 @@ public class Hand : CardCollection
         return Cards.Find(c => c.Equals(card));
     }
 
-    public void UpdateVisual()
+    public override void UpdateVisual()
     {
         OnHandUpdated?.Invoke(this);
     }

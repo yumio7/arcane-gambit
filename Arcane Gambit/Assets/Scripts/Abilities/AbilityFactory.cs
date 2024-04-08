@@ -8,7 +8,7 @@ public class AbilityFactory
 
     public AbilityFactory CreateNewAbility(string abilityName = "")
     {
-        _ability = new BasicAbility();
+        //_ability = new BasicAbility();
         _ability.AbilityName = abilityName;
         return this;
     }

@@ -81,6 +81,13 @@ public class AbilityManager : MonoBehaviour
         AbilityDirectory.Add("Swap Hands",
             new SwapHandAbility(new ConcreteAbilityInput<Hand>(Poker.Instance.Players[0].Hand), 
                 new ConcreteAbilityInput<Hand>(Poker.Instance.Players[1].Hand)));*/
+        AbilityDirectory.Add("The Fool", 
+            new ModifyCardAbility(new ConcreteAbilityInput<Card>(null,() => Poker.Instance.Players[0].Hand.GetCard(0),
+                    new ConcreteAbilityInput<Card>(null,() => Poker.Instance.Players[0].Hand.GetCard(1),
+                        new ConcreteAbilityInput<Card>(null,() => Poker.Instance.Players[0].Hand.GetCard(2),
+                            new ConcreteAbilityInput<Card>(null,() => Poker.Instance.Players[0].Hand.GetCard(3),
+                                new ConcreteAbilityInput<Card>(null,() => Poker.Instance.Players[0].Hand.GetCard(4)))))), 
+                new ConcreteAbilityInput<ModifyKey>(ModifyKey.NewCardFromDeck, () => ModifyKey.NewCardFromDeck)));
         
         
         EventButtonGenerator EBG = EventButtonGenerator.Instance;

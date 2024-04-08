@@ -1,54 +1,48 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class AbstractAbility : IAbility
 {
+    public bool Finished { get; protected set; } = false;
+
     public IAbility NextAbility { get; set; }
     public string AbilityName { get; set; }
+    protected Action OnInputReceived;
 
-    public void Setup()
+    public abstract void Setup();
+
+    public void Activate()
     {
-        throw new System.NotImplementedException();
+        AbilityManager.Instance.StartCoroutine(this.Process());
     }
 
-    public virtual void Activate()
-    {
-        throw new System.NotImplementedException();
-    }
+    public abstract IEnumerator Process();
 
-    public IEnumerator Process()
+    public void Finish()
     {
-        yield break;
-    }
-
-    public virtual void Finish()
-    {
+        Finished = true;
         NextAbility?.Activate();
     }
 
     public void Cleanup()
     {
-        throw new System.NotImplementedException();
+        Dispose();
     }
 
-    public virtual void RequestInput()
-    {
-        throw new System.NotImplementedException();
-    }
+    public abstract void RequestInput();
 
-    public bool IsReady()
-    {
-        throw new System.NotImplementedException();
-    }
+    public abstract bool IsReady();
 
     public bool IsFinished()
     {
-        throw new System.NotImplementedException();
+        if (NextAbility != null)
+        {
+            return Finished || NextAbility.IsFinished();
+        }
+        return Finished;
     }
 
-    public void Dispose()
-    {
-        throw new System.NotImplementedException();
-    }
+    public abstract void Dispose();
 }

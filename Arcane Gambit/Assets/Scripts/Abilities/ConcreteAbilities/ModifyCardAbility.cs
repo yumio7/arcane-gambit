@@ -10,18 +10,16 @@ public enum ModifyKey
     Spade,
     Club,
     Heart,
-    Diamond
+    Diamond,
+    NewCardFromDeck
 }
 
-public class ModifyCardAbility : IAbility
+public class ModifyCardAbility : AbstractAbility
 {
-    public IAbility NextAbility { get; set; }
-    public string AbilityName { get; set; }
     
     private IAbilityInput<Card> _input;
     private IAbilityInput<ModifyKey> _modify;
-    private readonly Action _onInputReceived;
-    public bool Finished { get; private set; } = false;
+    
 
     public ModifyCardAbility(IAbilityInput<Card> cardToModify, IAbilityInput<ModifyKey> modification)
     {
@@ -34,8 +32,32 @@ public class ModifyCardAbility : IAbility
         _input = cardToModify;
         _modify = modification;
 
-        _onInputReceived = () => RequestInput();
+        OnInputReceived = () => RequestInput();
     }
+    
+    /*public ModifyCardAbility(IAbilityInput<Hand> handToModify, IAbilityInput<ModifyKey> modification)
+    {
+        // Check if the inputs are null
+        if (handToModify == null || modification == null)
+        {
+            throw new ArgumentNullException(nameof(handToModify), "The provided arguments must not be null.");
+        }
+
+
+        List<Card> cards = new List<Card>();
+            
+        cards = handToModify.GetInput().Cards;
+        
+        _input = new ConcreteAbilityInput<Card>(null, () => cards[0],
+        new ConcreteAbilityInput<Card>(null, () => cards[1],
+            new ConcreteAbilityInput<Card>(null, () => cards[2],
+                new ConcreteAbilityInput<Card>(null, () => cards[3],
+                    new ConcreteAbilityInput<Card>(null, () => cards[4])))));
+        
+        _modify = modification;
+
+        OnInputReceived = () => RequestInput();
+    }*/
 
     /*public ModifyCardAbility(IAbilityInput<Card> cardToModify, IAbilityInput<ModifyKey> modification)
     {
@@ -51,25 +73,23 @@ public class ModifyCardAbility : IAbility
         _onInputReceived = () => RequestInput();
     }*/
     
-    public void Dispose()
+    public override void Dispose()
     {
         Debug.Log("DISPOSE");
-        _input.UnsubscribeFromSequence(_onInputReceived);
-        _modify.UnsubscribeFromSequence(_onInputReceived);
+        _input.UnsubscribeFromSequence(OnInputReceived);
+        _modify.UnsubscribeFromSequence(OnInputReceived);
+        _input.Cleanup();
+        _modify.Cleanup();
+        Finished = false;
     }
 
-    public void Setup()
+    public override void Setup()
     {
-        _input.SubscribeToSequence(_onInputReceived);
-        _modify.SubscribeToSequence(_onInputReceived);
+        _input.SubscribeToSequence(OnInputReceived);
+        _modify.SubscribeToSequence(OnInputReceived);
     }
 
-    public void Activate()
-    {
-        AbilityManager.Instance.StartCoroutine(this.Process());
-    }
-
-    public IEnumerator Process()
+    public override IEnumerator Process()
     {
         List<CardCollection> cardOwner = new List<CardCollection>();
         foreach (Card card in _input)
@@ -88,6 +108,8 @@ public class ModifyCardAbility : IAbility
         foreach (CardCollection cardCollection in cardOwner)
         {
             cardCollection.ResetLeftmostRemoveIndex();
+            cardCollection.UpdateVisual();
+            
         }
         yield return null;
         Finish();
@@ -109,26 +131,14 @@ public class ModifyCardAbility : IAbility
                 return card.SetSuit(SuitType.Heart);
             case ModifyKey.Diamond:
                 return card.SetSuit(SuitType.Diamond);
+            case ModifyKey.NewCardFromDeck:
+                return Poker.Instance.Deck.DrawCard();
             default:
                 throw new ArgumentOutOfRangeException(nameof(modifyKey), modifyKey, null);
         } 
     }
 
-    public void Finish()
-    {
-        Finished = true;
-        NextAbility?.Activate();
-    }
-
-    public void Cleanup()
-    {
-        Dispose();
-        _input.Cleanup();
-        _modify.Cleanup();
-        Finished = false;
-    }
-
-    public void RequestInput()
+    public override void RequestInput()
     {
         Debug.Log("request");
         if (_input?.IsInputSequenceReady() == false)
@@ -140,17 +150,8 @@ public class ModifyCardAbility : IAbility
         }
     }
 
-    public bool IsReady()
+    public override bool IsReady()
     {
         return _input.IsInputSequenceReady() && _modify.IsInputSequenceReady();
-    }
-
-    public bool IsFinished()
-    {
-        if (NextAbility != null)
-        {
-            return Finished || NextAbility.IsFinished();
-        }
-        return Finished;
     }
 }

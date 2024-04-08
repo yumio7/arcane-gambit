@@ -290,6 +290,11 @@ public static class HandEvaluator
         int temp_pointer = 0;
         int max_score = 0;
 
+        if (cards == null || cards.Count <= 0)
+        {
+            return max_score;
+        }
+        
         // Calculate an initial score with the first 5 cards.
         List<Card> original = new List<Card>();
         for (int i = 0; i < 5; i++)

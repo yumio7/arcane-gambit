@@ -27,6 +27,10 @@ public class CardCollection
 
     public virtual Card DrawCard()
     {
+        if (Cards.Count <= 0)
+        {
+            return null;
+        }
         var card = Cards.First();
         Cards.RemoveAt(0);
         card.Owner = null;
@@ -97,5 +101,10 @@ public class CardCollection
     public void ResetLeftmostRemoveIndex()
     {
         _leftmostRemovedIndex = Cards.Count;
+    }
+    
+    public virtual void UpdateVisual()
+    {
+
     }
 }
