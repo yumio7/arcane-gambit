@@ -71,17 +71,23 @@ public class ModifyCardAbility : IAbility
 
     public IEnumerator Process()
     {
+        List<CardCollection> cardOwner = new List<CardCollection>();
         foreach (Card card in _input)
         {
-            CardCollection cardOwner = card.Owner;
+            cardOwner.Add(card.Owner);
             Card returnCard = card;
-            Debug.Log(cardOwner);
-            cardOwner.Remove(card);
+            //Debug.Log(cardOwner);
+            cardOwner[cardOwner.Count-1].Remove(card);
             foreach (ModifyKey modify in _modify)
             {
                 returnCard = ModifyCard(returnCard, modify); 
             }
-            cardOwner.AddCard(returnCard);
+            cardOwner[cardOwner.Count-1].AddCard(returnCard);
+        }
+
+        foreach (CardCollection cardCollection in cardOwner)
+        {
+            cardCollection.ResetLeftmostRemoveIndex();
         }
         yield return null;
         Finish();

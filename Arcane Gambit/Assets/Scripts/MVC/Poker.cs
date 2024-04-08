@@ -17,7 +17,11 @@ public abstract class GameState
     
     public virtual void OnEnter(Poker poker) { }
     public abstract void Execute(Poker poker);
-    public virtual void OnExit(Poker poker) { }
+
+    public virtual void OnExit(Poker poker)
+    {
+        poker.ResetPlayersLeftmostIndex();
+    }
 }
 
 public class WaitingState : GameState
@@ -614,6 +618,7 @@ public class Poker : MonoBehaviour
         {
             player.Hand.DrawCard(Deck);
         }
+        player.Hand.ResetLeftmostRemoveIndex();
     }
 
     public void StartBettingSequence(bool forceBlind = false)
@@ -789,7 +794,6 @@ public class Poker : MonoBehaviour
     public void HandleMulliganResponse(Player player, int mulliganValue)
     {
         DealCardToPlayer(player, mulliganValue);
-        
         foreach (Card card in player.DiscardedCards.Cards)
         {
             DiscardPile.AddCard(card);
@@ -863,6 +867,14 @@ public class Poker : MonoBehaviour
     public int GetAmountOfFolded()
     {
         return Players.Count(player => player.OutOfBetting);
+    }
+
+    public void ResetPlayersLeftmostIndex()
+    {
+        foreach (Player player in Players)
+        {
+            player.Hand.ResetLeftmostRemoveIndex();
+        }
     }
     
 }

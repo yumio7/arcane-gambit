@@ -23,7 +23,7 @@ public class Hand : CardCollection
         MaximumHandSize = otherHand.MaximumHandSize;
         foreach (var card in otherHand.Cards)
         {
-            Cards.Add(new Card(card));
+            AddCard(new Card(card));
         }
     }
 
@@ -32,8 +32,7 @@ public class Hand : CardCollection
         if (Cards.Count < MaximumHandSize)
         {
             var card = deck.DrawCard();
-            card.Owner = this;
-            Cards.Add(card);
+            AddCard(card);
             OnHandUpdated?.Invoke(this);
         }
         else
@@ -47,8 +46,7 @@ public class Hand : CardCollection
         if (index >= 0 && index < Cards.Count)
         {
             var card = Cards[index];
-            Cards.RemoveAt(index);
-            card.Owner = null;
+            RemoveAt(index);
             OnHandUpdated?.Invoke(this);
             return card;
         }
@@ -60,11 +58,10 @@ public class Hand : CardCollection
     
     public Card DiscardCard(Card card)
     {
-        if (!Cards.Remove(card))
+        if (!Remove(card))
         {
             Debug.Log($"{card} is not in hand");
         }
-        card.Owner = null;
         OnHandUpdated?.Invoke(this);
         return card;
     }
@@ -108,8 +105,7 @@ public class Hand : CardCollection
     {
         if (Cards.Contains(card))
         {
-            Cards.Remove(card);
-            card.Owner = null;
+            Remove(card);
             OnHandUpdated?.Invoke(this);
         }
         else
@@ -125,6 +121,11 @@ public class Hand : CardCollection
             throw new IndexOutOfRangeException();
         }
         return Cards[i];
+    }
+
+    public Card GetCard(Card card)
+    {
+        return Cards.Find(c => c.Equals(card));
     }
 
     public void UpdateVisual()

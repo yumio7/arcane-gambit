@@ -9,11 +9,14 @@ using UnityEngine;
 ///</summary>
 public class CardCollection
 {
+    private int _leftmostRemovedIndex;
+    
     public List<Card> Cards { get; protected set; }
 
     public CardCollection()
     {
         Cards = new List<Card>();
+        ResetLeftmostRemoveIndex();
     }
     
     // Deep copy constructor
@@ -27,6 +30,7 @@ public class CardCollection
         var card = Cards.First();
         Cards.RemoveAt(0);
         card.Owner = null;
+        SetLeftmostRemoveIndex(0);
         return card;
     }
 
@@ -50,21 +54,48 @@ public class CardCollection
     {
         if(card == null) {return;}
         card.Owner = this;
-        Cards.Add(card);
+        if (_leftmostRemovedIndex > Cards.Count)
+        {
+            ResetLeftmostRemoveIndex();
+        }
+        Cards.Insert(_leftmostRemovedIndex, card);
     }
 
     public void AddCard(List<Card> cards)
     {
+        if(cards == null || cards.Count == 0) {return;}
         foreach (Card card in cards)
         {
             card.Owner = this;
-            Cards.Add(card);
+            if (_leftmostRemovedIndex > Cards.Count)
+            {
+                ResetLeftmostRemoveIndex();
+            }
+            Cards.Insert(_leftmostRemovedIndex, card);
         }
     }
 
-    public void Remove(Card card)
+    public bool Remove(Card card)
     {
         card.Owner = null;
-        Cards.Remove(card);
+        SetLeftmostRemoveIndex(Cards.IndexOf(card));
+        return Cards.Remove(card);
+    }
+
+    public void RemoveAt(int index)
+    {
+        Cards[index].Owner = null;
+        Cards.RemoveAt(index);
+        SetLeftmostRemoveIndex(index);
+    }
+
+    public void SetLeftmostRemoveIndex(int newIndex)
+    {
+        _leftmostRemovedIndex = Mathf.Min(_leftmostRemovedIndex, newIndex);
+    }
+
+    public void ResetLeftmostRemoveIndex()
+    {
+        _leftmostRemovedIndex = Cards.Count;
     }
 }
