@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3649405980280074302}
   - component: {fileID: 7648064174717925150}
   m_Layer: 0
-  m_Name: PokerHandsController
+  m_Name: PokerHandsVisualController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,7 +48,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01e8c89e5bad9334fafd869d2b8d753b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poker: {fileID: 0}
   worldHandComponents:
   - {fileID: 7860876994087919002}
   - {fileID: 4625764617534295523}

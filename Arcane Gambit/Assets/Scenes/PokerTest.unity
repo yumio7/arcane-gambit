@@ -275,7 +275,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1063260117
 PrefabInstance:
@@ -808,7 +808,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2047479008932829111, guid: 44384964433387b47ad14db8481f8333, type: 3}
       propertyPath: m_Name
-      value: PokerHandsController
+      value: PokerHandsVisualController
       objectReference: {fileID: 0}
     - target: {fileID: 3649405980280074302, guid: 44384964433387b47ad14db8481f8333, type: 3}
       propertyPath: m_RootOrder
@@ -873,7 +873,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 983057459974232837, guid: 4ab6f39abc9763b4f8f7da645dc389bf, type: 3}
       propertyPath: m_Name
-      value: CommunityCardController
+      value: CommunityCardVisualController
       objectReference: {fileID: 0}
     - target: {fileID: 6950567966090853095, guid: 4ab6f39abc9763b4f8f7da645dc389bf, type: 3}
       propertyPath: poker
@@ -881,7 +881,7 @@ PrefabInstance:
       objectReference: {fileID: 730694281}
     - target: {fileID: 8675928830292140884, guid: 4ab6f39abc9763b4f8f7da645dc389bf, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8675928830292140884, guid: 4ab6f39abc9763b4f8f7da645dc389bf, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1047,7 +1047,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3920277093246222484, guid: 51d4310fa703eee4d92b7144a796059d, type: 3}
       propertyPath: m_Name
-      value: PlayerStatusController
+      value: PlayerStatusVisualController
       objectReference: {fileID: 0}
     - target: {fileID: 9132918698363586897, guid: 51d4310fa703eee4d92b7144a796059d, type: 3}
       propertyPath: poker

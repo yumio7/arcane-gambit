@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PlayerActionVisualizationManager : MonoBehaviour
 {
-    [Header("Poker Instance")]
-    public Poker poker;
     [Header("Message Visualization Components")]
     public WorldMessageVisualizerComponent[] worldMessageVisualizers;
 
@@ -14,11 +12,10 @@ public class PlayerActionVisualizationManager : MonoBehaviour
     void Start()
     {
         players_in_game = new List<Player>();
-        if (poker == null) { Debug.LogWarning("Player UI missing poker reference!"); }
 
-        if (poker != null)
+        if (Poker.Instance != null)
         {
-            CyclicList<Player> players = poker.Players;
+            CyclicList<Player> players = Poker.Instance.Players;
             for (int i = 0; i < players.Count; i++)
             {
                 players_in_game.Add(players[i]);
@@ -30,7 +27,7 @@ public class PlayerActionVisualizationManager : MonoBehaviour
 
     public void DisplayPlayerActionResponseMessage(Player player, PlayerRequestType requestType, int value)
     {
-        if (players_in_game.Contains(player) && poker != null)
+        if (players_in_game.Contains(player) && Poker.Instance != null)
         {
             int index = players_in_game.IndexOf(player);
             if (index < worldMessageVisualizers.Length)
@@ -48,7 +45,7 @@ public class PlayerActionVisualizationManager : MonoBehaviour
                             } else if (value == -1)
                             {
                                 message += "folded.";
-                            } else if (players_in_game[index].CurrentBetAmount == poker.CurrentMinBid)
+                            } else if (players_in_game[index].CurrentBetAmount == Poker.Instance.CurrentMinBid)
                             {
                                 message += "matched the bet.";
                             }

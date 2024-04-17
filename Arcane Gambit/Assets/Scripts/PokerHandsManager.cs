@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PokerHandsManager : MonoBehaviour
 {
-    [Header("Poker Instance")]
-    public Poker poker;
     [Header("World Hand Components")]
     public WorldHandComponent[] worldHandComponents;
 
@@ -17,11 +15,10 @@ public class PokerHandsManager : MonoBehaviour
     {
         poker_hands = new List<Hand>();
         players_in_game = new List<Player>();
-        if (poker == null) { Debug.LogWarning("Player UI missing poker reference!"); }
 
-        if (poker != null)
+        if (Poker.Instance != null)
         {
-            CyclicList<Player> players = poker.Players;
+            CyclicList<Player> players = Poker.Instance.Players;
             for (int i = 0; i < players.Count; i++)
             {
                 poker_hands.Add(players[i].Hand);
@@ -38,7 +35,7 @@ public class PokerHandsManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
         {
             // Put your custom action here
-            foreach (Player player in poker.Players)
+            foreach (Player player in Poker.Instance.Players)
             {
                 player.Hand.UpdateVisual();
             }

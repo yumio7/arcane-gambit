@@ -4,21 +4,19 @@ using UnityEngine;
 
 public class CommunityCardController : MonoBehaviour
 {
-    [Header("Poker Instance")]
-    public Poker poker;
     [Header("World Hand Component")]
     public WorldHandComponent worldHandComponent;
 
     void Update()
     {
-        if (poker != null && worldHandComponent != null)
+        if (Poker.Instance != null && worldHandComponent != null)
         {
             // If the community card is active 
-            if (poker.CommunityCard != null)
+            if (Poker.Instance.CommunityCard != null)
             {
                 if (worldHandComponent.CardsInHand() <= 0)
                 {
-                    worldHandComponent.AddCard(poker.CommunityCard);
+                    worldHandComponent.AddCard(Poker.Instance.CommunityCard);
                 }
             } else
             {

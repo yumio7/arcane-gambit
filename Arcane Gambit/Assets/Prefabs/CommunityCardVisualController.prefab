@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8675928830292140884}
   - component: {fileID: 6950567966090853095}
   m_Layer: 0
-  m_Name: CommunityCardController
+  m_Name: CommunityCardVisualController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   m_Children:
   - {fileID: 2113390120137410859}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6950567966090853095
 MonoBehaviour:
@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f46a5731b7ff3154abf66a7e5eefc9c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poker: {fileID: 0}
   worldHandComponent: {fileID: 7962047898819835961}
 --- !u!1001 &4350203042256372398
 PrefabInstance:

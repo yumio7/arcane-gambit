@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 729743971642936245}
   - component: {fileID: 9132918698363586897}
   m_Layer: 0
-  m_Name: PlayerStatusController
+  m_Name: PlayerStatusVisualController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,7 +48,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abf13a76499f3bd4aa139ddcb0cd2661, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poker: {fileID: 0}
   worldMessageVisualizers:
   - {fileID: 1265568079131246429}
   - {fileID: 4558069295172662061}
