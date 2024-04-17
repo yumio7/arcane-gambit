@@ -18,7 +18,7 @@ public class WorldHandComponent : MonoBehaviour
     private List<WorldHandCardObject> cards_in_hand;
 
     // Represents a card in the hand
-    private class WorldHandCardObject
+    public class WorldHandCardObject
     {
         public Card card;
         public GameObject prefab;
@@ -119,6 +119,12 @@ public class WorldHandComponent : MonoBehaviour
                 }
             }
         }
+    }
+
+    // Returns the cards in this hand component.
+    public List<WorldHandCardObject> GetCardsInHand()
+    {
+        return cards_in_hand;
     }
 
     // Returns the current ammount of cards in the world hand component

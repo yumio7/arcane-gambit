@@ -336,6 +336,10 @@ public class Poker : MonoBehaviour
     }
     
     public GameState PokerState { get; private set; } = new RoundStartState();
+    // Event for detecting phase changes
+    public delegate void PokerStateChangeAction(GameState state);
+    public event PokerStateChangeAction OnPokerStateChanged;
+
     public CyclicList<Player> Players { get; private set; } = new CyclicList<Player>()
     {
 
@@ -579,6 +583,7 @@ public class Poker : MonoBehaviour
     {
         PokerState.OnExit(this);
         PokerState = gameState;
+        OnPokerStateChanged?.Invoke(gameState);
         PokerState.OnEnter(this);
     }
 

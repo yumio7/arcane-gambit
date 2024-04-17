@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class PlayerUIController : MonoBehaviour
 {
-    [Header("Poker Instance")]
-    public Poker poker;
+    [Header("Human Player Hand")]
+    public WorldHandComponent humanPlayerHandComponent;
     [Header("UI References")]
     public Text chips_text;
     public Text pot_total_text;
@@ -18,7 +18,7 @@ public class PlayerUIController : MonoBehaviour
     public Slider raise_slider;
     [FormerlySerializedAs("raise_ammount_text")] public Text raise_amount_text;
     [FormerlySerializedAs("muligan_ui")] public GameObject mulligan_ui;
-    public Image[] card_select_icons;
+    public CardMulliganIcon[] card_select_icons;
     public Image table_turn_indic_icon;
     public Slider hand_strength_slider;
     [Header("Graphics")]
@@ -31,25 +31,30 @@ public class PlayerUIController : MonoBehaviour
     private int current_raise;
     private List<int> cards_to_remove;
 
+    [System.Serializable]
+    public struct CardMulliganIcon
+    {
+        public Image sprite;
+        public GameObject prefab;
+    }
+
     private void Start()
     {
         cards_to_remove = new List<int>();
         FindHumanPlayer();
-
-        if (poker == null) { Debug.LogWarning("Player UI missing poker reference!"); }
     }
 
     private void Update()
     {
-        if (poker != null && human_player != null)
+        if (Poker.Instance != null && human_player != null)
         {
             if (chips_text != null)
             {
                 chips_text.text = "Current Chips: " + human_player.TotalChips.ToString();
             }
             // State specific UI (bid menu vs muligan menu)
-            GameState current_state = poker.PokerState;
-            if (poker.CurrentPlayer == human_player)
+            GameState current_state = Poker.Instance.PokerState;
+            if (Poker.Instance.CurrentPlayer == human_player)
             {
                 if (current_state is BettingRoundState || current_state is BlindBettingRoundState)
                 {
@@ -77,22 +82,22 @@ public class PlayerUIController : MonoBehaviour
             // Raise control
             if (raise_slider != null)
             {
-                raise_slider.minValue = poker.CurrentMinBid - human_player.CurrentBetAmount + 1;
+                raise_slider.minValue = Poker.Instance.CurrentMinBid - human_player.CurrentBetAmount + 1;
                 raise_slider.maxValue = human_player.TotalChips;
                 if (raise_amount_text != null)
                 {
                     raise_amount_text.text = raise_slider.value.ToString();
                 }
-                current_raise = ((int)raise_slider.value) - (poker.CurrentMinBid - human_player.CurrentBetAmount);
+                current_raise = ((int)raise_slider.value) - (Poker.Instance.CurrentMinBid - human_player.CurrentBetAmount);
             }
             // Table info
             if (bet_to_you_text != null && pot_total_text != null && match_text != null && bet_raise_text != null)
             {
-                int match_ammount = Mathf.Max(poker.CurrentMinBid - human_player.CurrentBetAmount, 0);
+                int match_ammount = Mathf.Max(Poker.Instance.CurrentMinBid - human_player.CurrentBetAmount, 0);
 
                 // | Highest Bid: {poker.CurrentMinBid}
-                pot_total_text.text = $"Pot Total: {poker.BidPot} | (Your round bet: {human_player.CurrentBetAmount})";
-                bet_to_you_text.text = $"Phase: {poker.PokerState}";
+                pot_total_text.text = $"Pot Total: {Poker.Instance.BidPot} | (Your round bet: {human_player.CurrentBetAmount})";
+                bet_to_you_text.text = $"Phase: {Poker.Instance.PokerState}";
 
                 if (match_ammount > 0)
                 {
@@ -110,20 +115,40 @@ public class PlayerUIController : MonoBehaviour
             {
                 for(int i = 0; i < 5; i++)
                 {
-                    if (cards_to_remove.Contains(i))
+                    if (card_select_icons[i].sprite != null)
                     {
-                        card_select_icons[i].sprite = checked_sprite;
-                    } else
+                        if (cards_to_remove.Contains(i))
+                        {
+                            card_select_icons[i].sprite.sprite = checked_sprite;
+                        }
+                        else
+                        {
+                            card_select_icons[i].sprite.sprite = unchecked_sprite;
+                        }
+                    }
+                }
+
+                if (humanPlayerHandComponent != null)
+                {
+                    List<WorldHandComponent.WorldHandCardObject> hand = humanPlayerHandComponent.GetCardsInHand();
+                    if (hand.Count == 5)
                     {
-                        card_select_icons[i].sprite = unchecked_sprite;
+                        for (int i = 0; i < 5; i++)
+                        {
+                            if (card_select_icons[i].prefab != null)
+                            {
+                                card_select_icons[i].prefab.transform.position = 
+                                    Camera.main.WorldToScreenPoint(hand[i].prefab.transform.position + new Vector3(0, 0.3f, 0));
+                            }
+                        }
                     }
                 }
             }
             // Turn indicator
             if (table_turn_indic_icon != null && turn_sprites.Length == 4)
             {
-                CyclicList<Player> players = poker.Players;
-                Player turn_player = poker.CurrentPlayer;
+                CyclicList<Player> players = Poker.Instance.Players;
+                Player turn_player = Poker.Instance.CurrentPlayer;
                 int index = players.IndexOf(turn_player);
                 if (index > -1 && index < players.Count) {
                     table_turn_indic_icon.sprite = turn_sprites[players.IndexOf(turn_player)];
@@ -141,9 +166,9 @@ public class PlayerUIController : MonoBehaviour
                     {
                         List<Card> hand_to_check = new List<Card>(human_player.Hand.Cards);
                         // Check if community card is available or not
-                        if (poker.CommunityCard != null)
+                        if (Poker.Instance.CommunityCard != null)
                         {
-                            hand_to_check.Add(poker.CommunityCard);
+                            hand_to_check.Add(Poker.Instance.CommunityCard);
                         }
                         int hand_score = HandEvaluator.EvaluateHand(hand_to_check);
                         hand_strength_slider.value = hand_score;
@@ -208,9 +233,9 @@ public class PlayerUIController : MonoBehaviour
 
     private void FindHumanPlayer()
     {
-        if (poker != null)
+        if (Poker.Instance != null)
         {
-            CyclicList<Player> players = poker.Players;
+            CyclicList<Player> players = Poker.Instance.Players;
             for(int i = 0; i < players.Count; i++)
             {
                 if (players.Current.Type == PlayerType.Human)
