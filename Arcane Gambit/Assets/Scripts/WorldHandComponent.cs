@@ -34,7 +34,7 @@ public class WorldHandComponent : MonoBehaviour
         }
     }
 
-    void Start()
+    void Awake()
     {
         card_base_prefab = Resources.Load<GameObject>("BaseCardPrefab");
         cards_in_hand = new List<WorldHandCardObject>();
@@ -81,11 +81,17 @@ public class WorldHandComponent : MonoBehaviour
     // Removes all cards from the hand component.
     public void ClearHand()
     {
-        for (int i = 0; i < cards_in_hand.Count; i++)
+        if (cards_in_hand != null)
         {
-            Destroy(cards_in_hand[i].prefab);
+            for (int i = 0; i < cards_in_hand.Count; i++)
+            {
+                Destroy(cards_in_hand[i].prefab);
+            }
+            cards_in_hand.Clear();
+        } else
+        {
+            cards_in_hand = new List<WorldHandCardObject>();
         }
-        cards_in_hand.Clear();
     }
 
     // Determines positions of cards in hand 
