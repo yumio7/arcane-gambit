@@ -4,7 +4,7 @@ public class Card
     public SuitType Suit { get; private set; }
     public int Rank { get; private set; }
     public string Name { get; private set; }
-
+    public EventTriggerClickable Clickable { get; set; }
     public Card(SuitType suit, int rank, string name = "")
     {
         Suit = suit;
