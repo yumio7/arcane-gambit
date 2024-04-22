@@ -73,3 +73,37 @@ public class ButtonInputRequest<T> : IAbilityInputRequest<T>
         _buttonDatas.Clear();
     }
 }
+
+public enum TargetTypes
+{
+    Self,
+    Enemy,
+    Any
+}
+
+public class CardInputRequest<T> : IAbilityInputRequest<T> where T : Card
+{
+    private TargetTypes _targetHands;
+    public CardInputRequest(TargetTypes targetHands)
+    {
+        
+    }
+    
+    public void Request(Action<T> setMethod)
+    {
+        if (_targetHands == TargetTypes.Self || _targetHands == TargetTypes.Any)
+        {
+            Card card = Poker.Instance.Players[0].Hand.GetCard(0);
+            //Poker.Instance.Players[0].Hand.GetCard(0).Clickable.SetEventTriggerParameters(setMethod, );
+        }
+        if (_targetHands == TargetTypes.Self || _targetHands == TargetTypes.Any)
+        {
+            
+        }
+    }
+
+    public void Cleanup()
+    {
+        throw new NotImplementedException();
+    }
+}

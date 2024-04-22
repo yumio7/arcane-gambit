@@ -50,14 +50,20 @@ public class WorldHandComponent : MonoBehaviour
             newCardPrefab.transform.position = card_anchor.position;
             newCardPrefab.transform.rotation = card_anchor.rotation;
             newCardPrefab.transform.SetParent(card_anchor);
+
             CardVisualizer cardVisualizer = newCardPrefab.GetComponent<CardVisualizer>();
             cardVisualizer.SetCard(card);
+
+            EventTriggerClickable newClickable = newCardPrefab.GetComponent<EventTriggerClickable>();
+            card.Clickable = newClickable;
+
             // Add it to our hand using its card as a key
-            WorldHandCardObject card_object = new WorldHandCardObject(card, 
-                newCardPrefab, 
+            WorldHandCardObject card_object = new WorldHandCardObject(card,
+                newCardPrefab,
                 card_anchor.transform.position,
-                newCardPrefab.GetComponent<EventTriggerClickable>());
+                newClickable);
             cards_in_hand.Add(card_object);
+
             // Recalculate card world positions
             CalculateCardPositions();
         }
